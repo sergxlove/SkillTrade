@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="SkillTrade.ContentAPI/SkillTrade.ContentAPI.csproj" />
+  <Project Path="SkillTrade.Core/SkillTrade.Core.csproj" Id="2271907a-949b-4fcb-b7d5-84920d66a791" />
+  <Project Path="SkillTrade.CoursesAPI/SkillTrade.CoursesAPI.csproj" />
+  <Project Path="SkillTrade.LoginAPI/SkillTrade.LoginAPI.csproj" />
+  <Project Path="SkillTrade.Proxy/SkillTrade.Proxy.csproj" />
+</Solution>

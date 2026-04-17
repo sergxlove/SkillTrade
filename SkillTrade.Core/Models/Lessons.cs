@@ -4,6 +4,9 @@ namespace SkillTrade.Core.Models
 {
     public class Lessons
     {
+        public const int MIN_LENGTH_TITLE = 3;
+        public const int MAX_LENGTH_TITLE = 200;
+        public const int MAX_LENGTH_CONTENT = 100000;
         public Guid Id { get; }
         public Guid IdCourse { get; }
         public string Title { get; } = string.Empty;
@@ -28,16 +31,14 @@ namespace SkillTrade.Core.Models
                 return ResultModel<Lessons>.Failure("Поле IdCourse не должно быть пустым");
             if (string.IsNullOrWhiteSpace(title))
                 return ResultModel<Lessons>.Failure("Поле Title не должно быть пустым");
-            if (title.Length < 3)
-                return ResultModel<Lessons>.Failure("Поле Title должно содержать минимум 3 символа");
-            if (title.Length > 200)
-                return ResultModel<Lessons>.Failure("Поле Title не должно превышать 200 символов");
+            if (title.Length < MIN_LENGTH_TITLE)
+                return ResultModel<Lessons>.Failure($"Поле Title должно содержать минимум {MIN_LENGTH_TITLE} символа");
+            if (title.Length > MAX_LENGTH_TITLE)
+                return ResultModel<Lessons>.Failure($"Поле Title не должно превышать {MAX_LENGTH_TITLE} символов");
             if (string.IsNullOrWhiteSpace(content))
                 return ResultModel<Lessons>.Failure("Поле Content не должно быть пустым");
-            if (content.Length < 10)
-                return ResultModel<Lessons>.Failure("Поле Content должно содержать минимум 10 символов");
-            if (content.Length > 100000)
-                return ResultModel<Lessons>.Failure("Поле Content не должно превышать 100000 символов");
+            if (content.Length > MAX_LENGTH_CONTENT)
+                return ResultModel<Lessons>.Failure($"Поле Content не должно превышать {MAX_LENGTH_CONTENT} символов");
             if (createAt > DateTime.UtcNow)
                 return ResultModel<Lessons>.Failure("Поле CreatedAt не может быть в будущем");
             return ResultModel<Lessons>.Success(new Lessons(id, idCourse, title, content, createAt));

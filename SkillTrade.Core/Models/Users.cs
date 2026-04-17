@@ -6,6 +6,13 @@ namespace SkillTrade.Core.Models
 {
     public class Users
     {
+        public const int MIN_LENGTH_LOGIN = 3;
+        public const int MAX_LENGTH_LOGIN = 50;
+        public const int MIN_LENGTH_NAME = 2;
+        public const int MAX_LENGTH_NAME = 100;
+        public const int MIN_LENGTH_PASSWORD = 3;
+        public const int MAX_LENGTH_PASSWORD = 50;
+        public static readonly string[] AllowedRoles = ["admin", "actor", "student"];
         public Guid Id { get; }
         public string Login { get; } = string.Empty;
         public string Name { get; } = string.Empty;
@@ -53,21 +60,21 @@ namespace SkillTrade.Core.Models
                 return ResultModel<Users>.Failure("Поле Id не должно быть пустым");
             if (string.IsNullOrWhiteSpace(login))
                 return ResultModel<Users>.Failure("Поле Login не должно быть пустым");
-            if (login.Length < 3)
-                return ResultModel<Users>.Failure("Поле Login должно содержать минимум 3 символа");
-            if (login.Length > 50)
-                return ResultModel<Users>.Failure("Поле Login не должно превышать 50 символов");
+            if (login.Length < MIN_LENGTH_LOGIN)
+                return ResultModel<Users>.Failure($"Поле Login должно содержать минимум {MIN_LENGTH_LOGIN} символа");
+            if (login.Length > MAX_LENGTH_LOGIN)
+                return ResultModel<Users>.Failure($"Поле Login не должно превышать {MAX_LENGTH_LOGIN} символов");
             if (string.IsNullOrWhiteSpace(name))
                 return ResultModel<Users>.Failure("Поле Name не должно быть пустым");
-            if (name.Length < 2)
-                return ResultModel<Users>.Failure("Поле Name должно содержать минимум 2 символа");
-            if (name.Length > 100)
-                return ResultModel<Users>.Failure("Поле Name не должно превышать 100 символов");
+            if (name.Length < MIN_LENGTH_NAME)
+                return ResultModel<Users>.Failure($"Поле Name должно содержать минимум {MIN_LENGTH_NAME} символа");
+            if (name.Length > MAX_LENGTH_LOGIN)
+                return ResultModel<Users>.Failure($"Поле Name не должно превышать {MAX_LENGTH_NAME} символов");
             if (string.IsNullOrWhiteSpace(password))
                 return ResultModel<Users>.Failure("Поле Password не должно быть пустым");
-            if (password.Length < 6)
+            if (password.Length < MIN_LENGTH_PASSWORD)
                 return ResultModel<Users>.Failure("Поле Password должно содержать минимум 6 символов");
-            if (password.Length > 100)
+            if (password.Length > MAX_LENGTH_PASSWORD)
                 return ResultModel<Users>.Failure("Поле Password не должно превышать 100 символов");
             if (password == password.ToLower())
                 return ResultModel<Users>.Failure("Поле Password должно содержать хотя бы одну заглавную букву");
@@ -75,8 +82,7 @@ namespace SkillTrade.Core.Models
                 return ResultModel<Users>.Failure("Поле Password должно содержать хотя бы одну цифру");
             if (string.IsNullOrWhiteSpace(role))
                 return ResultModel<Users>.Failure("Поле Role не должно быть пустым");
-            string[] allowedRoles = new[] { "admin", "actor", "student" };
-            if (!allowedRoles.Contains(role.ToLower()))
+            if (!AllowedRoles.Contains(role.ToLower()))
                 return ResultModel<Users>.Failure("Поле Role должно быть одной из следующих ролей: admin, actor, student");
             if (balance < 0)
                 return ResultModel<Users>.Failure("Поле Balance не должно быть отрицательным");

@@ -4,4 +4,5 @@
   <Project Path="SkillTrade.CoursesAPI/SkillTrade.CoursesAPI.csproj" />
   <Project Path="SkillTrade.LoginAPI/SkillTrade.LoginAPI.csproj" />
   <Project Path="SkillTrade.Proxy/SkillTrade.Proxy.csproj" />
+  <Project Path="SkillTrade.Tests/SkillTrade.Tests.csproj" Id="22efb38c-8414-4671-82b0-e186c58a7c60" />
 </Solution>

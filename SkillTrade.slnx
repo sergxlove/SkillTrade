@@ -2,6 +2,7 @@
   <Project Path="SkillTrade.ContentAPI/SkillTrade.ContentAPI.csproj" />
   <Project Path="SkillTrade.Core/SkillTrade.Core.csproj" Id="2271907a-949b-4fcb-b7d5-84920d66a791" />
   <Project Path="SkillTrade.CoursesAPI/SkillTrade.CoursesAPI.csproj" />
+  <Project Path="SkillTrade.DataAccess.Postgres/SkillTrade.DataAccess.Postgres.csproj" Id="88aa806e-cd26-4820-9ec4-98b9d2b14354" />
   <Project Path="SkillTrade.LoginAPI/SkillTrade.LoginAPI.csproj" />
   <Project Path="SkillTrade.Proxy/SkillTrade.Proxy.csproj" />
   <Project Path="SkillTrade.Tests/SkillTrade.Tests.csproj" Id="22efb38c-8414-4671-82b0-e186c58a7c60" />

@@ -59,7 +59,7 @@ namespace SkillTrade.LoginAPI
                 });
                 options.AddPolicy("OnlyForAuthUser", policy =>
                 {
-                    policy.RequireRole("user", "admin");
+                    policy.RequireRole("user", "admin", "actor");
                 });
             });
 

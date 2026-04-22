@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace SkillTrade.LoginAPI.Requests
+namespace SkillTrade.Core.Requests
 {
     public class JwtRequest
     {

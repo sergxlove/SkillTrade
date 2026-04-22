@@ -1,6 +1,6 @@
-﻿using SkillTrade.LoginAPI.Requests;
+﻿using SkillTrade.Core.Requests;
 
-namespace SkillTrade.LoginAPI.Abstractions
+namespace SkillTrade.Core.Abstractions
 {
     public interface IJwtProviderService
     {

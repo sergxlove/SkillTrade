@@ -1,10 +1,10 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using SkillTrade.LoginAPI.Abstractions;
-using SkillTrade.LoginAPI.Requests;
+using SkillTrade.Core.Abstractions;
+using SkillTrade.Core.Requests;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
-namespace SkillTrade.LoginAPI.Services
+namespace SkillTrade.Core.Services
 {
     public class JwtProviderService : IJwtProviderService
     {

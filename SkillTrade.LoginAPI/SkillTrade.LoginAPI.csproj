@@ -18,4 +18,10 @@
     <ProjectReference Include="..\SkillTrade.DataAccess.Postgres\SkillTrade.DataAccess.Postgres.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Abstractions\" />
+    <Folder Include="Requests\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

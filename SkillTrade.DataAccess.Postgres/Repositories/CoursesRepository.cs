@@ -14,11 +14,11 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             _context = context;
         }
 
-        public async Task<Courses?> GetByIdAsync(Guid id)
+        public async Task<Courses?> GetByIdAsync(Guid id, CancellationToken token)
         {
             var entity = await _context.CoursesTable
                 .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id, token);
 
             if (entity == null) return null;
 
@@ -28,58 +28,58 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 entity.DurationTimeHours, entity.CreatedAt).Value;
         }
 
-        public async Task<IEnumerable<Courses>> GetAllAsync()
+        public async Task<IEnumerable<Courses>> GetAllAsync(CancellationToken token)
         {
             var entities = await _context.CoursesTable
                 .AsNoTracking()
                 .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync();
+                .ToListAsync(token);
 
             return entities.Select(e => Courses.Create(
                 e.Id, e.IdActor, e.Title, e.Description, e.Level,
                 e.Price, e.LessonsCount, e.DurationTimeHours, e.CreatedAt).Value);
         }
 
-        public async Task<IEnumerable<Courses>> GetByActorIdAsync(Guid actorId)
+        public async Task<IEnumerable<Courses>> GetByActorIdAsync(Guid actorId, CancellationToken token)
         {
             var entities = await _context.CoursesTable
                 .AsNoTracking()
                 .Where(c => c.IdActor == actorId)
                 .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync();
+                .ToListAsync(token);
 
             return entities.Select(e => Courses.Create(
                 e.Id, e.IdActor, e.Title, e.Description, e.Level,
                 e.Price, e.LessonsCount, e.DurationTimeHours, e.CreatedAt).Value);
         }
 
-        public async Task<IEnumerable<Courses>> GetByLevelAsync(string level)
+        public async Task<IEnumerable<Courses>> GetByLevelAsync(string level, CancellationToken token)
         {
             var entities = await _context.CoursesTable
                 .AsNoTracking()
                 .Where(c => c.Level.ToLower() == level.ToLower())
                 .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync();
+                .ToListAsync(token);
 
             return entities.Select(e => Courses.Create(
                 e.Id, e.IdActor, e.Title, e.Description, e.Level,
                 e.Price, e.LessonsCount, e.DurationTimeHours, e.CreatedAt).Value);
         }
 
-        public async Task<IEnumerable<Courses>> SearchByTitleAsync(string searchTerm)
+        public async Task<IEnumerable<Courses>> SearchByTitleAsync(string searchTerm, CancellationToken token)
         {
             var entities = await _context.CoursesTable
                 .AsNoTracking()
                 .Where(c => EF.Functions.ILike(c.Title, $"%{searchTerm}%"))
                 .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync();
+                .ToListAsync(token);
 
             return entities.Select(e => Courses.Create(
                 e.Id, e.IdActor, e.Title, e.Description, e.Level,
                 e.Price, e.LessonsCount, e.DurationTimeHours, e.CreatedAt).Value);
         }
 
-        public async Task<Guid> CreateAsync(Courses course)
+        public async Task<Guid> CreateAsync(Courses course, CancellationToken token)
         {
             var entity = new CoursesEntity
             {
@@ -94,15 +94,15 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 CreatedAt = course.CreatedAt
             };
 
-            await _context.CoursesTable.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await _context.CoursesTable.AddAsync(entity, token);
+            await _context.SaveChangesAsync(token);
 
             return entity.Id;
         }
 
-        public async Task UpdateAsync(Courses course)
+        public async Task UpdateAsync(Courses course, CancellationToken token)
         {
-            var entity = await _context.CoursesTable.FindAsync(course.Id);
+            var entity = await _context.CoursesTable.FindAsync(new object[] { course.Id }, token);
             if (entity != null)
             {
                 entity.Title = course.Title;
@@ -113,33 +113,33 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 entity.DurationTimeHours = course.DurationTimeHours;
 
                 _context.CoursesTable.Update(entity);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(token);
             }
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id, CancellationToken token)
         {
-            var entity = await _context.CoursesTable.FindAsync(id);
+            var entity = await _context.CoursesTable.FindAsync(new object[] { id }, token);
             if (entity != null)
             {
                 _context.CoursesTable.Remove(entity);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(token);
             }
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken token)
         {
-            return await _context.CoursesTable.AnyAsync(c => c.Id == id);
+            return await _context.CoursesTable.AnyAsync(c => c.Id == id, token);
         }
 
-        public async Task<IEnumerable<Courses>> GetPagedAsync(int page, int pageSize)
+        public async Task<IEnumerable<Courses>> GetPagedAsync(int page, int pageSize, CancellationToken token)
         {
             var entities = await _context.CoursesTable
                 .AsNoTracking()
                 .OrderByDescending(c => c.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync();
+                .ToListAsync(token);
 
             return entities.Select(e => Courses.Create(
                 e.Id, e.IdActor, e.Title, e.Description, e.Level,

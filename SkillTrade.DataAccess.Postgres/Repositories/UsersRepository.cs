@@ -2,6 +2,7 @@
 using SkillTrade.Core.Models;
 using SkillTrade.DataAccess.Postgres.Abstractions;
 using SkillTrade.DataAccess.Postgres.Models;
+using System.Runtime.InteropServices;
 
 namespace SkillTrade.DataAccess.Postgres.Repositories
 {
@@ -14,11 +15,11 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             _context = context;
         }
 
-        public async Task<Users?> GetByIdAsync(Guid id)
+        public async Task<Users?> GetByIdAsync(Guid id, CancellationToken token)
         {
             var entity = await _context.UsersTable
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .FirstOrDefaultAsync(u => u.Id == id, token);
 
             if (entity == null) return null;
 
@@ -27,11 +28,11 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 entity.Role, entity.Balance, entity.CreatedAt).Value;
         }
 
-        public async Task<Users?> GetByLoginAsync(string login)
+        public async Task<Users?> GetByLoginAsync(string login, CancellationToken token)
         {
             var entity = await _context.UsersTable
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Login.ToLower() == login.ToLower());
+                .FirstOrDefaultAsync(u => u.Login.ToLower() == login.ToLower(), token);
 
             if (entity == null) return null;
 
@@ -40,32 +41,32 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 entity.Role, entity.Balance, entity.CreatedAt).Value;
         }
 
-        public async Task<IEnumerable<Users>> GetAllAsync()
+        public async Task<IEnumerable<Users>> GetAllAsync(CancellationToken token)
         {
             var entities = await _context.UsersTable
                 .AsNoTracking()
                 .OrderByDescending(u => u.CreatedAt)
-                .ToListAsync();
+                .ToListAsync(token);
 
             return entities.Select(e => Users.Create(
                 e.Id, e.Login, e.Name, e.HashPassword,
                 e.Role, e.Balance, e.CreatedAt).Value);
         }
 
-        public async Task<IEnumerable<Users>> GetByRoleAsync(string role)
+        public async Task<IEnumerable<Users>> GetByRoleAsync(string role, CancellationToken token)
         {
             var entities = await _context.UsersTable
                 .AsNoTracking()
                 .Where(u => u.Role.ToLower() == role.ToLower())
                 .OrderByDescending(u => u.CreatedAt)
-                .ToListAsync();
+                .ToListAsync(token);
 
             return entities.Select(e => Users.Create(
                 e.Id, e.Login, e.Name, e.HashPassword,
                 e.Role, e.Balance, e.CreatedAt).Value);
         }
 
-        public async Task<Guid> CreateAsync(Users user)
+        public async Task<Guid> CreateAsync(Users user, CancellationToken token)
         {
             var entity = new UsersEntity
             {
@@ -78,66 +79,54 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 CreatedAt = user.CreatedAt
             };
 
-            await _context.UsersTable.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await _context.UsersTable.AddAsync(entity, token);
+            await _context.SaveChangesAsync(token);
 
             return entity.Id;
         }
 
-        public async Task UpdateAsync(Users user)
-        {
-            var entity = await _context.UsersTable.FindAsync(user.Id);
-            if (entity != null)
-            {
-                entity.Login = user.Login;
-                entity.Name = user.Name;
-                entity.Role = user.Role;
-
-                _context.UsersTable.Update(entity);
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task UpdateBalanceAsync(Guid userId, decimal newBalance)
-        {
-            var entity = await _context.UsersTable.FindAsync(userId);
-            if (entity != null)
-            {
-                entity.Balance = newBalance;
-                _context.UsersTable.Update(entity);
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var entity = await _context.UsersTable.FindAsync(id);
-            if (entity != null)
-            {
-                _context.UsersTable.Remove(entity);
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task<bool> ExistsByLoginAsync(string login)
+        public async Task<int> UpdateAsync(Users user, CancellationToken token)
         {
             return await _context.UsersTable
-                .AnyAsync(u => u.Login.ToLower() == login.ToLower());
+                .Where(a => a.Id == user.Id)
+                .ExecuteUpdateAsync(a => a
+                .SetProperty(a => a.HashPassword, user.HashPassword));
         }
 
-        public async Task<bool> ExistsByIdAsync(Guid id)
+        public async Task<int> UpdateBalanceAsync(Guid userId, decimal newBalance, CancellationToken token)
         {
-            return await _context.UsersTable.AnyAsync(u => u.Id == id);
+            return await _context.UsersTable
+                .Where(a => a.Id == userId)
+                .ExecuteUpdateAsync(a => a
+                .SetProperty(a => a.Balance, newBalance));
         }
 
-        public async Task<IEnumerable<Users>> GetPagedAsync(int page, int pageSize)
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
+        {
+            return await _context.UsersTable
+                .Where(a => a.Id == id)
+                .ExecuteDeleteAsync(token);
+        }
+
+        public async Task<bool> ExistsByLoginAsync(string login, CancellationToken token)
+        {
+            return await _context.UsersTable
+                .AnyAsync(u => u.Login.ToLower() == login.ToLower(), token);
+        }
+
+        public async Task<bool> ExistsByIdAsync(Guid id, CancellationToken token)
+        {
+            return await _context.UsersTable.AnyAsync(u => u.Id == id, token);
+        }
+
+        public async Task<IEnumerable<Users>> GetPagedAsync(int page, int pageSize, CancellationToken token)
         {
             var entities = await _context.UsersTable
                 .AsNoTracking()
                 .OrderByDescending(u => u.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync();
+                .ToListAsync(token );
 
             return entities.Select(e => Users.Create(
                 e.Id, e.Login, e.Name, e.HashPassword,

@@ -14,11 +14,11 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             _context = context;
         }
 
-        public async Task<Lessons?> GetByIdAsync(Guid id)
+        public async Task<Lessons?> GetByIdAsync(Guid id, CancellationToken token)
         {
             var entity = await _context.LessonsTable
                 .AsNoTracking()
-                .FirstOrDefaultAsync(l => l.Id == id);
+                .FirstOrDefaultAsync(l => l.Id == id, token);
 
             if (entity == null) return null;
 
@@ -27,19 +27,19 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 entity.Content, entity.CreatedAt).Value;
         }
 
-        public async Task<IEnumerable<Lessons>> GetByCourseIdAsync(Guid courseId)
+        public async Task<IEnumerable<Lessons>> GetByCourseIdAsync(Guid courseId, CancellationToken token)
         {
             var entities = await _context.LessonsTable
                 .AsNoTracking()
                 .Where(l => l.IdCourse == courseId)
                 .OrderBy(l => l.CreatedAt)
-                .ToListAsync();
+                .ToListAsync(token);
 
             return entities.Select(e => Lessons.Create(
                 e.Id, e.IdCourse, e.Title, e.Content, e.CreatedAt).Value);
         }
 
-        public async Task<IEnumerable<Lessons>> GetByCourseIdPagedAsync(Guid courseId, int page, int pageSize)
+        public async Task<IEnumerable<Lessons>> GetByCourseIdPagedAsync(Guid courseId, int page, int pageSize, CancellationToken token)
         {
             var entities = await _context.LessonsTable
                 .AsNoTracking()
@@ -47,13 +47,13 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 .OrderBy(l => l.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync();
+                .ToListAsync(token);
 
             return entities.Select(e => Lessons.Create(
                 e.Id, e.IdCourse, e.Title, e.Content, e.CreatedAt).Value);
         }
 
-        public async Task<Guid> CreateAsync(Lessons lesson)
+        public async Task<Guid> CreateAsync(Lessons lesson, CancellationToken token)
         {
             var entity = new LessonsEntity
             {
@@ -64,44 +64,44 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 CreatedAt = lesson.CreatedAt
             };
 
-            await _context.LessonsTable.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await _context.LessonsTable.AddAsync(entity, token);
+            await _context.SaveChangesAsync(token);
 
             return entity.Id;
         }
 
-        public async Task UpdateAsync(Lessons lesson)
+        public async Task UpdateAsync(Lessons lesson, CancellationToken token)
         {
-            var entity = await _context.LessonsTable.FindAsync(lesson.Id);
+            var entity = await _context.LessonsTable.FindAsync(new object[] { lesson.Id }, token);
             if (entity != null)
             {
                 entity.Title = lesson.Title;
                 entity.Content = lesson.Content;
 
                 _context.LessonsTable.Update(entity);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(token);
             }
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id, CancellationToken token)
         {
-            var entity = await _context.LessonsTable.FindAsync(id);
+            var entity = await _context.LessonsTable.FindAsync(new object[] { id }, token);
             if (entity != null)
             {
                 _context.LessonsTable.Remove(entity);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(token);
             }
         }
 
-        public async Task<int> GetLessonsCountByCourseIdAsync(Guid courseId)
+        public async Task<int> GetLessonsCountByCourseIdAsync(Guid courseId, CancellationToken token)
         {
             return await _context.LessonsTable
-                .CountAsync(l => l.IdCourse == courseId);
+                .CountAsync(l => l.IdCourse == courseId, token);
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken token)
         {
-            return await _context.LessonsTable.AnyAsync(l => l.Id == id);
+            return await _context.LessonsTable.AnyAsync(l => l.Id == id, token);
         }
     }
 }

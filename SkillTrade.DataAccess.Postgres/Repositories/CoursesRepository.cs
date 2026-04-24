@@ -100,31 +100,25 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             return entity.Id;
         }
 
-        public async Task UpdateAsync(Courses course, CancellationToken token)
+        public async Task<int> UpdateAsync(Courses course, CancellationToken token)
         {
-            var entity = await _context.CoursesTable.FindAsync(new object[] { course.Id }, token);
-            if (entity != null)
-            {
-                entity.Title = course.Title;
-                entity.Description = course.Description;
-                entity.Level = course.Level;
-                entity.Price = course.Price;
-                entity.LessonsCount = course.LessonsCount;
-                entity.DurationTimeHours = course.DurationTimeHours;
-
-                _context.CoursesTable.Update(entity);
-                await _context.SaveChangesAsync(token);
-            }
+            return await _context.CoursesTable
+                .AsNoTracking()
+                .Where(a => a.Id == course.Id)
+                .ExecuteUpdateAsync(a => a.SetProperty(a => a.Title, course.Title)
+                .SetProperty(a => a.Description, course.Description)
+                .SetProperty(a => a.Level, course.Level)
+                .SetProperty(a => a.Price, course.Price)
+                .SetProperty(a => a.LessonsCount, course.LessonsCount)
+                .SetProperty(a => a.DurationTimeHours, course.DurationTimeHours), token);
         }
 
-        public async Task DeleteAsync(Guid id, CancellationToken token)
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
-            var entity = await _context.CoursesTable.FindAsync(new object[] { id }, token);
-            if (entity != null)
-            {
-                _context.CoursesTable.Remove(entity);
-                await _context.SaveChangesAsync(token);
-            }
+            return await _context.CoursesTable
+                .AsNoTracking()
+                .Where(a => a.Id == id)
+                .ExecuteDeleteAsync(token);
         }
 
         public async Task<bool> ExistsAsync(Guid id, CancellationToken token)

@@ -99,25 +99,21 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             return entity.Id;
         }
 
-        public async Task UpdateProgressAsync(Guid userCourseId, int newProgress, CancellationToken token)
+        public async Task<int> UpdateProgressAsync(Guid userCourseId, int newProgress, CancellationToken token)
         {
-            var entity = await _context.UserCoursesTable.FindAsync(new object[] { userCourseId }, token);
-            if (entity != null && newProgress <= entity.TotalProgress)
-            {
-                entity.CurrentProgress = newProgress;
-                _context.UserCoursesTable.Update(entity);
-                await _context.SaveChangesAsync(token);
-            }
+            return await _context.UserCoursesTable
+                .AsNoTracking()
+                .Where(a => a.Id == userCourseId)
+                .ExecuteUpdateAsync(a => a
+                .SetProperty(a => a.CurrentProgress, newProgress), token);
         }
 
-        public async Task DeleteAsync(Guid id, CancellationToken token)
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
-            var entity = await _context.UserCoursesTable.FindAsync(new object[] { id }, token);
-            if (entity != null)
-            {
-                _context.UserCoursesTable.Remove(entity);
-                await _context.SaveChangesAsync(token);
-            }
+            return await _context.UserCoursesTable
+                .AsNoTracking()
+                .Where(a => a.Id == id)
+                .ExecuteDeleteAsync(token);
         }
 
         public async Task<bool> IsUserSubscribedAsync(Guid userId, Guid courseId, CancellationToken token)

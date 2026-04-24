@@ -70,27 +70,22 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             return entity.Id;
         }
 
-        public async Task UpdateAsync(Lessons lesson, CancellationToken token)
+        public async Task<int> UpdateAsync(Lessons lesson, CancellationToken token)
         {
-            var entity = await _context.LessonsTable.FindAsync(new object[] { lesson.Id }, token);
-            if (entity != null)
-            {
-                entity.Title = lesson.Title;
-                entity.Content = lesson.Content;
-
-                _context.LessonsTable.Update(entity);
-                await _context.SaveChangesAsync(token);
-            }
+            return await _context.LessonsTable
+                .AsNoTracking()
+                .Where(a => a.Id ==  lesson.Id)
+                .ExecuteUpdateAsync(a => a
+                .SetProperty(a => a.Title, lesson.Title)
+                .SetProperty(a => a.Content, lesson.Content), token);
         }
 
-        public async Task DeleteAsync(Guid id, CancellationToken token)
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
-            var entity = await _context.LessonsTable.FindAsync(new object[] { id }, token);
-            if (entity != null)
-            {
-                _context.LessonsTable.Remove(entity);
-                await _context.SaveChangesAsync(token);
-            }
+            return await _context.LessonsTable
+                .AsNoTracking()
+                .Where(a => a.Id == id)
+                .ExecuteDeleteAsync(token);
         }
 
         public async Task<int> GetLessonsCountByCourseIdAsync(Guid courseId, CancellationToken token)

@@ -5,8 +5,14 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using SkillTrade.Core.Abstractions;
+using SkillTrade.Core.Services;
 using SkillTrade.DataAccess.Postgres;
+using SkillTrade.DataAccess.Postgres.Abstractions;
+using SkillTrade.DataAccess.Postgres.Repositories;
+using SkillTrade.LoginAPI.Abstractions;
 using SkillTrade.LoginAPI.Extensions;
+using SkillTrade.LoginAPI.Services;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -21,6 +27,10 @@ namespace SkillTrade.LoginAPI
             IConfigurationSection? aspnetSetting = builder.Configuration.GetSection("AspnetSetting");
             builder.Services.AddDbContext<SkillTradeDbContext>(options =>
                 options.UseNpgsql(postgresSetting["ConnectionString"]));
+            builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+            builder.Services.AddScoped<IUsersService, UsersService>();
+            builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
+            builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

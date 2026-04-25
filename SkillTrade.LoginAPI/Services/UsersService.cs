@@ -1,16 +1,17 @@
 ﻿using SkillTrade.Core.Models;
 using SkillTrade.DataAccess.Postgres.Abstractions;
+using SkillTrade.LoginAPI.Abstractions;
 
 namespace SkillTrade.LoginAPI.Services
 {
-    public class UsersService
+    public class UsersService : IUsersService
     {
         private readonly IUsersRepository _repository;
         public UsersService(IUsersRepository repository)
         {
             _repository = repository;
         }
-        public async Task<Guid> CreateAsync(Users user,  CancellationToken token)
+        public async Task<Guid> CreateAsync(Users user, CancellationToken token)
         {
             return await _repository.CreateAsync(user, token);
         }
@@ -46,13 +47,21 @@ namespace SkillTrade.LoginAPI.Services
         {
             return await _repository.GetPagedAsync(page, pageSize, token);
         }
-        public async Task UpdateAsync(Users user, CancellationToken token)
+        public async Task<int> UpdateAsync(Users user, CancellationToken token)
         {
             return await _repository.UpdateAsync(user, token);
         }
-        public async Task UpdateBalanceAsync(Guid userId, decimal newBalance, CancellationToken token)
+        public async Task<int> UpdateBalanceAsync(Guid userId, decimal newBalance, CancellationToken token)
         {
             return await _repository.UpdateBalanceAsync(userId, newBalance, token);
+        }
+        public async Task<bool> VerifyAsync(string login, string password, CancellationToken token)
+        {
+            return await _repository.VerifyAsync(login, password, token);
+        }
+        public async Task<string> GetRoleAsync(string login, CancellationToken token)
+        {
+            return await _repository.GetRoleAsync(login, token);
         }
     }
 }

@@ -2,7 +2,6 @@
 using SkillTrade.Core.Models;
 using SkillTrade.DataAccess.Postgres.Abstractions;
 using SkillTrade.DataAccess.Postgres.Models;
-using System.Runtime.InteropServices;
 
 namespace SkillTrade.DataAccess.Postgres.Repositories
 {
@@ -90,7 +89,7 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             return await _context.UsersTable
                 .Where(a => a.Id == user.Id)
                 .ExecuteUpdateAsync(a => a
-                .SetProperty(a => a.HashPassword, user.HashPassword));
+                .SetProperty(a => a.HashPassword, user.HashPassword), token);
         }
 
         public async Task<int> UpdateBalanceAsync(Guid userId, decimal newBalance, CancellationToken token)
@@ -98,7 +97,7 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             return await _context.UsersTable
                 .Where(a => a.Id == userId)
                 .ExecuteUpdateAsync(a => a
-                .SetProperty(a => a.Balance, newBalance));
+                .SetProperty(a => a.Balance, newBalance), token);
         }
 
         public async Task<int> DeleteAsync(Guid id, CancellationToken token)
@@ -131,6 +130,20 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             return entities.Select(e => Users.Create(
                 e.Id, e.Login, e.Name, e.HashPassword,
                 e.Role, e.Balance, e.CreatedAt).Value);
+        }
+
+        public async Task<bool> VerifyAsync(string login, string password, CancellationToken token)
+        {
+            var user = await _context.UsersTable.FirstOrDefaultAsync(a => a.Login == login, token);
+            if (user == null) return false;
+            return Users.VerifyPassword(password, user.HashPassword);
+        }
+
+        public async Task<string> GetRoleAsync(string login, CancellationToken token)
+        {
+            var user = await _context.UsersTable.FirstOrDefaultAsync(a => a.Login == login, token);
+            if (user is null) return string.Empty;
+            return user.Role;
         }
     }
 }

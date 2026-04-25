@@ -1,8 +1,8 @@
 ﻿using SkillTrade.Core.Models;
 
-namespace SkillTrade.DataAccess.Postgres.Abstractions
+namespace SkillTrade.LoginAPI.Abstractions
 {
-    public interface IUsersRepository
+    public interface IUsersService
     {
         Task<Guid> CreateAsync(Users user, CancellationToken token);
         Task<int> DeleteAsync(Guid id, CancellationToken token);

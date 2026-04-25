@@ -1,0 +1,539 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SkillTrade - Вход в аккаунт</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0B0F1C, #03050B);
+            color: #EDF2FF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* кастомный скролл */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #141A2E;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2D3A5E;
+            border-radius: 10px;
+        }
+
+        /* контейнер */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px;
+            width: 100%;
+        }
+
+        /* хедер */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0 20px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #C084FC, #3B82F6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+            .logo i {
+                background: none;
+                -webkit-background-clip: unset;
+                color: #3B82F6;
+                font-size: 32px;
+            }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+            .nav-links a {
+                color: #B9C7E6;
+                text-decoration: none;
+                font-weight: 500;
+                transition: 0.2s;
+            }
+
+                .nav-links a:hover {
+                    color: white;
+                }
+
+        .btn-outline-light {
+            background: transparent;
+            border: 1px solid #3B82F6;
+            color: #3B82F6;
+            padding: 8px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+            .btn-outline-light:hover {
+                background: rgba(59,130,246,0.1);
+                border-color: #60A5FA;
+                color: #60A5FA;
+            }
+
+        /* основная секция с формой */
+        .login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding: 60px 20px;
+        }
+
+        .login-card {
+            background: rgba(14, 22, 41, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 48px 40px;
+            max-width: 500px;
+            width: 100%;
+            transition: 0.3s;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.5);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+            .login-header h1 {
+                font-size: 36px;
+                font-weight: 700;
+                background: linear-gradient(135deg, #FFFFFF, #A2C3FF);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                margin-bottom: 12px;
+            }
+
+            .login-header p {
+                color: #94A3D8;
+                font-size: 15px;
+            }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #CBD5F0;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+            .input-wrapper i {
+                position: absolute;
+                left: 18px;
+                color: #5B6EAE;
+                font-size: 18px;
+            }
+
+            .input-wrapper input {
+                width: 100%;
+                background: #0A0F1E;
+                border: 1px solid #263153;
+                border-radius: 28px;
+                padding: 16px 20px 16px 50px;
+                font-size: 16px;
+                color: white;
+                font-family: 'Inter', sans-serif;
+                transition: 0.2s;
+                outline: none;
+            }
+
+                .input-wrapper input:focus {
+                    border-color: #3B82F6;
+                    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+                }
+
+                .input-wrapper input::placeholder {
+                    color: #4A5A82;
+                }
+
+        .toggle-password {
+            position: absolute;
+            right: 18px;
+            left: auto;
+            cursor: pointer;
+            color: #5B6EAE;
+            transition: 0.2s;
+        }
+
+            .toggle-password:hover {
+                color: #3B82F6;
+            }
+
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0 32px;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #B9C7E6;
+        }
+
+            .checkbox-label input {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+                accent-color: #3B82F6;
+            }
+
+        .forgot-link {
+            color: #3B82F6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+            .forgot-link:hover {
+                color: #60A5FA;
+                text-decoration: underline;
+            }
+
+        .btn-login {
+            width: 100%;
+            background: linear-gradient(95deg, #3B82F6, #8B5CF6);
+            border: none;
+            padding: 16px;
+            border-radius: 44px;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 6px 14px rgba(59,130,246,0.3);
+            margin-bottom: 28px;
+        }
+
+            .btn-login:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(59,130,246,0.4);
+            }
+
+        .register-prompt {
+            text-align: center;
+            color: #94A3D8;
+            font-size: 15px;
+            border-top: 1px solid #1F2B46;
+            padding-top: 28px;
+        }
+
+            .register-prompt a {
+                color: #3B82F6;
+                text-decoration: none;
+                font-weight: 600;
+                margin-left: 6px;
+            }
+
+                .register-prompt a:hover {
+                    text-decoration: underline;
+                }
+
+        .demo-alert {
+            margin-top: 20px;
+            background: rgba(59,130,246,0.12);
+            border-radius: 20px;
+            padding: 14px;
+            font-size: 13px;
+            text-align: center;
+            color: #A5B4FC;
+            border: 1px dashed #3B82F6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 28px 0;
+            border-top: 1px solid #1A2340;
+            color: #6C7AA6;
+            margin-top: auto;
+            font-size: 14px;
+        }
+
+        @media (max-width: 650px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .login-card {
+                padding: 32px 24px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+            }
+
+            .logo {
+                align-self: flex-start;
+            }
+
+            .nav-links {
+                align-self: flex-end;
+                margin-top: -50px;
+            }
+        }
+
+        @media (min-width: 651px) {
+            .navbar {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- навигация -->
+        <div class="navbar">
+            <a href="#" class="logo">
+                <i class="fas fa-chalkboard-user"></i>
+                <span>SkillTrade</span>
+            </a>
+            <div class="nav-links">
+                <a href="#" class="btn-outline-light">Регистрация</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- форма входа -->
+    <div class="login-section">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Добро пожаловать</h1>
+                <p>Войдите, чтобы продолжить обучение</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <label class="input-label">Электронная почта или логин</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="text" id="loginEmail" placeholder="ivan@skilltrade.ru или ivan123" autocomplete="username">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Пароль</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+                        <i class="fas fa-eye toggle-password" id="togglePasswordIcon"></i>
+                    </div>
+                </div>
+                <div class="options-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMe"> Запомнить меня
+                    </label>
+                    <a href="#" class="forgot-link">Забыли пароль?</a>
+                </div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-arrow-right-to-bracket"></i> Войти
+                </button>
+                <div class="register-prompt">
+                    Нет аккаунта?<a href="#">Создать аккаунт</a>
+                </div>
+                <div class="demo-alert">
+                    <i class="fas fa-flask"></i> Демо-режим: логин <strong>demo@skilltrade.ru</strong> / пароль <strong>demo123</strong>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 SkillTrade — Образовательная платформа нового поколения</p>
+    </footer>
+
+    <script>
+    // Элементы DOM
+    const togglePassword = document.getElementById('togglePasswordIcon');
+    const passwordInput = document.getElementById('loginPassword');
+    const loginForm = document.getElementById('loginForm');
+    const loginEmailInput = document.getElementById('loginEmail');
+    const rememberCheckbox = document.getElementById('rememberMe');
+
+    // Показать / скрыть пароль
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+
+    // Загрузка сохранённого логина из localStorage (статическая имитация "запомнить меня")
+    function loadSavedLogin() {
+        const savedLogin = localStorage.getItem('skilltrade_saved_login');
+        if (savedLogin) {
+            loginEmailInput.value = savedLogin;
+            rememberCheckbox.checked = true;
+        }
+    }
+    loadSavedLogin();
+
+    // обработка отправки формы (статическая демонстрация)
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const loginValue = loginEmailInput.value.trim();
+        const passwordValue = passwordInput.value.trim();
+
+        // простая валидация
+        if (!loginValue || !passwordValue) {
+            showToast('❌ Заполните оба поля', 'error');
+            return;
+        }
+
+        // статическая "проверка" для демо
+        if (loginValue === 'demo@skilltrade.ru' && passwordValue === 'demo123') {
+            // успешный вход
+            if (rememberCheckbox.checked) {
+                localStorage.setItem('skilltrade_saved_login', loginValue);
+            } else {
+                localStorage.removeItem('skilltrade_saved_login');
+            }
+            showToast('✅ Успешный вход! Перенаправление на главную...', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+        else if (loginValue === 'student@skilltrade.ru' && passwordValue === '123456') {
+            // дополнительный демо-пользователь
+            if (rememberCheckbox.checked) localStorage.setItem('skilltrade_saved_login', loginValue);
+            else localStorage.removeItem('skilltrade_saved_login');
+            showToast('✅ Добро пожаловать, студент! Скоро перейдём в кабинет.', 'success');
+            setTimeout(() => window.location.href = 'index.html', 1300);
+        }
+        else {
+            showToast('⚠️ Неверный логин или пароль. Используйте demo@skilltrade.ru / demo123', 'error');
+        }
+    });
+
+    // всплывающие уведомления (стилизованный тост)
+    function showToast(message, type) {
+        // удаляем старый тост если есть
+        const oldToast = document.querySelector('.custom-toast');
+        if(oldToast) oldToast.remove();
+
+        const toast = document.createElement('div');
+        toast.className = `custom-toast toast-${type}`;
+        toast.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="fas ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}" style="font-size:22px;"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+
+        // стили для тоста
+        toast.style.position = 'fixed';
+        toast.style.bottom = '30px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.background = type === 'success' ? '#0F2A1F' : '#2A1A2A';
+        toast.style.border = type === 'success' ? '1px solid #10B981' : '1px solid #EF4444';
+        toast.style.color = '#fff';
+        toast.style.padding = '14px 28px';
+        toast.style.borderRadius = '60px';
+        toast.style.fontWeight = '500';
+        toast.style.zIndex = '9999';
+        toast.style.backdropFilter = 'blur(12px)';
+        toast.style.backgroundColor = type === 'success' ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
+        toast.style.fontFamily = "'Inter', sans-serif";
+        toast.style.fontSize = '14px';
+        toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+        toast.style.whiteSpace = 'nowrap';
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 400);
+        }, 2800);
+    }
+
+    // кнопка "забыли пароль" (демо-уведомление)
+    document.querySelector('.forgot-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showToast('📧 Функция восстановления появится в ближайшее время!', 'info');
+    });
+
+    // демо-ссылка на регистрацию
+    document.querySelector('.register-prompt a').addEventListener('click', (e) => {
+        e.preventDefault();
+        showToast('✨ Страница регистрации в разработке. Следите за обновлениями!', 'info');
+    });
+
+    // добавим стиль для инфо-тоста
+    const style = document.createElement('style');
+    style.textContent = `
+        .custom-toast.toast-info {
+            background: rgba(59,130,246,0.15);
+            border-color: #3B82F6;
+        }
+        .custom-toast {
+            transition: opacity 0.25s ease;
+        }
+        @media (max-width: 550px) {
+            .custom-toast { white-space: normal; width: 90%; text-align: center; }
+        }
+    `;
+    document.head.appendChild(style);
+    </script>
+</body>
+</html>

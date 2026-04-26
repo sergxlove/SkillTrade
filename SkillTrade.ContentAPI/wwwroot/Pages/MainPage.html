@@ -17,16 +17,17 @@
             </a>
             <div class="nav-links">
                 <a href="#" class="active">Главная</a>
-                <a href="#">Мои курсы</a>
-                <a href="#">Для авторов</a>
+                <a href="profile.html">Профиль</a>
+                <a href="author-panel.html">Для авторов</a>
             </div>
-            <div class="user-menu" onclick="window.location.href='login.html'">
+            <div class="user-menu" onclick="logout()">
                 <i class="fas fa-user"></i>
                 <span>Алексей</span>
-                <i class="fas fa-wallet"></i>
-                <span class="balance">4,250 ₽</span>
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="logout-btn">Выход</span>
             </div>
         </div>
+
         <div class="hero">
             <div class="hero-text">
                 <h1>Прокачай навыки<br>с лучшими курсами</h1>
@@ -38,6 +39,7 @@
             </div>
             <div style="font-size: 80px;"><i class="fas fa-graduation-cap" style="color: #3B82F6; opacity: 0.7;"></i></div>
         </div>
+
         <div class="my-courses-section" id="myCoursesSection" style="display: none;">
             <div class="section-title">
                 <i class="fas fa-play-circle"></i>
@@ -45,6 +47,7 @@
             </div>
             <div class="my-courses-grid" id="myCoursesGrid"></div>
         </div>
+
         <div class="filters">
             <div class="filter-buttons" id="filterGroup">
                 <div class="filter-chip active" data-level="all">Все уровни</div>
@@ -54,12 +57,14 @@
             </div>
             <div class="result-count" id="resultCount">Показано 0 курсов</div>
         </div>
+
         <div class="courses-grid" id="coursesGrid"></div>
     </div>
 
     <footer>
         <p>© 2025 SkillTrade — Образовательная платформа нового поколения</p>
     </footer>
+
     <div class="modal-overlay" id="courseModal">
         <div class="modal">
             <div class="modal-header">
@@ -139,6 +144,7 @@
                 author: "Роман Захаров"
             }
         ];
+
         let myCourses = [
             { courseId: 1, progress: 65, subscribedAt: "2025-03-15", totalLessons: 48, currentLesson: 31 },
             { courseId: 2, progress: 30, subscribedAt: "2025-04-01", totalLessons: 32, currentLesson: 10 }
@@ -146,6 +152,14 @@
 
         let currentLevelFilter = "all";
         let currentSearchTerm = "";
+
+        function logout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.removeItem('skilltrade_token');
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
 
         function getLevelText(level) {
             const levels = { beginner: "Начинающий", middle: "Средний", advanced: "Продвинутый" };

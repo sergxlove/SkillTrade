@@ -18,13 +18,13 @@
             <div class="nav-links">
                 <a href="index.html">Главная</a>
                 <a href="#" class="active">Профиль</a>
-                <a href="#">Мои курсы</a>
+                <a href="author-panel.html">Для авторов</a>
             </div>
-            <div class="user-menu">
+            <div class="user-menu" onclick="logout()">
                 <i class="fas fa-user"></i>
                 <span>Алексей</span>
-                <i class="fas fa-wallet"></i>
-                <span class="balance" id="headerBalance">4,250 ₽</span>
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="logout-btn">Выход</span>
             </div>
         </div>
 
@@ -163,7 +163,7 @@
                                 <i class="fas fa-desktop"></i> Текущий сеанс<br>
                                 <small style="color: #6C7AA6;">Chrome на Windows • Москва</small>
                             </div>
-                            <button class="btn-secondary" style="padding: 8px 16px;">Выйти везде</button>
+                            <button class="btn-secondary" style="padding: 8px 16px;" onclick="showToast('Все сеансы завершены', 'info')">Выйти везде</button>
                         </div>
                     </div>
                 </div>
@@ -222,210 +222,217 @@
     </footer>
 
     <script>
-    let userBalance = 4250;
-    let myCoursesData = [
-        { id: 1, title: "Fullstack JavaScript: от новичка до PRO", progress: 65, totalLessons: 48, completed: false },
-        { id: 2, title: "React + TypeScript: enterprise приложения", progress: 30, totalLessons: 38, completed: false }
-    ];
+        let userBalance = 4250;
+        let myCoursesData = [
+            { id: 1, title: "Fullstack JavaScript: от новичка до PRO", progress: 65, totalLessons: 48, completed: false },
+            { id: 2, title: "React + TypeScript: enterprise приложения", progress: 30, totalLessons: 38, completed: false }
+        ];
 
-    let transactions = [
-        { id: 1, type: "deposit", amount: 5000, date: "2025-03-15", description: "Пополнение баланса" },
-        { id: 2, type: "purchase", amount: 4990, date: "2025-03-15", description: "Оплата курса: Fullstack JavaScript" },
-        { id: 3, type: "purchase", amount: 5490, date: "2025-04-01", description: "Оплата курса: React + TypeScript" },
-        { id: 4, type: "deposit", amount: 5000, date: "2025-04-10", description: "Пополнение баланса" }
-    ];
+        let transactions = [
+            { id: 1, type: "deposit", amount: 5000, date: "2025-03-15", description: "Пополнение баланса" },
+            { id: 2, type: "purchase", amount: 4990, date: "2025-03-15", description: "Оплата курса: Fullstack JavaScript" },
+            { id: 3, type: "purchase", amount: 5490, date: "2025-04-01", description: "Оплата курса: React + TypeScript" },
+            { id: 4, type: "deposit", amount: 5000, date: "2025-04-10", description: "Пополнение баланса" }
+        ];
 
-    function updateHeaderBalance() {
-        document.getElementById('headerBalance').innerText = userBalance.toLocaleString() + ' ₽';
-        const balanceElement = document.getElementById('currentBalance');
-        if (balanceElement) balanceElement.innerText = userBalance.toLocaleString() + ' ₽';
-    }
-
-    function updateStats() {
-        const completed = myCoursesData.filter(c => c.progress === 100).length;
-        const certificates = completed;
-        document.getElementById('statCourses').innerText = myCoursesData.length;
-        document.getElementById('statCompleted').innerText = completed;
-        document.getElementById('statCertificates').innerText = certificates;
-    }
-
-    function renderTransactions() {
-        const container = document.getElementById('transactionsList');
-        if (!container) return;
-
-        container.innerHTML = transactions.slice(0, 5).map(t => `
-            <div class="transaction-item">
-                <div class="transaction-info">
-                    <div class="transaction-icon">
-                        <i class="fas ${t.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up'}" style="color: ${t.type === 'deposit' ? '#10B981' : '#EF4444'}"></i>
-                    </div>
-                    <div class="transaction-details">
-                        <h4>${t.description}</h4>
-                        <p>${t.date}</p>
-                    </div>
-                </div>
-                <div class="transaction-amount ${t.type === 'deposit' ? 'positive' : 'negative'}">
-                    ${t.type === 'deposit' ? '+' : '-'} ${t.amount.toLocaleString()} ₽
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function renderMyCourses() {
-        const container = document.getElementById('myCoursesList');
-        if (!container) return;
-
-        if (myCoursesData.length === 0) {
-            container.innerHTML = '<p style="text-align:center; padding:40px; color:#94A3D8;">У вас пока нет курсов. Перейдите на главную и запишитесь на первый курс!</p>';
-            return;
+        function logout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.removeItem('skilltrade_token');
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
         }
 
-        container.innerHTML = `
-            <div class="courses-mini-grid">
-                ${myCoursesData.map(course => `
-                    <div class="mini-course-card">
-                        <div class="mini-course-title">${escapeHtml(course.title)}</div>
-                        <div class="mini-progress-bar">
-                            <div class="mini-progress-fill" style="width: ${course.progress}%;"></div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin: 12px 0;">
-                            <span style="font-size: 13px;">Прогресс: ${course.progress}%</span>
-                            <span style="font-size: 13px;">${Math.floor(course.progress / 100 * course.totalLessons)}/${course.totalLessons} уроков</span>
-                        </div>
-                        <button class="btn-primary" style="width:100%; padding: 10px;" onclick="continueCourse(${course.id})">
-                            <i class="fas fa-play"></i> ${course.progress > 0 ? 'Продолжить' : 'Начать'}
-                        </button>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
-
-    function continueCourse(courseId) {
-        showToast(`🎓 Переход к курсу...`, 'info');
-        setTimeout(() => {
-            window.location.href = `learning.html?course=${courseId}`;
-        }, 1000);
-    }
-
-    function openTopupModal() {
-        document.getElementById('topupModal').classList.add('active');
-    }
-
-    function closeTopupModal() {
-        document.getElementById('topupModal').classList.remove('active');
-    }
-
-    function processTopup() {
-        const amount = parseInt(document.getElementById('topupAmount').value);
-        if (!amount || amount < 100) {
-            showToast('Введите сумму пополнения (минимум 100 ₽)', 'error');
-            return;
+        function updateHeaderBalance() {
+            const balanceElement = document.getElementById('currentBalance');
+            if (balanceElement) balanceElement.innerText = userBalance.toLocaleString() + ' ₽';
         }
 
-        userBalance += amount;
-        transactions.unshift({
-            id: Date.now(),
-            type: "deposit",
-            amount: amount,
-            date: new Date().toISOString().split('T')[0],
-            description: "Пополнение баланса"
+        function updateStats() {
+            const completed = myCoursesData.filter(c => c.progress === 100).length;
+            const certificates = completed;
+            document.getElementById('statCourses').innerText = myCoursesData.length;
+            document.getElementById('statCompleted').innerText = completed;
+            document.getElementById('statCertificates').innerText = certificates;
+        }
+
+        function renderTransactions() {
+            const container = document.getElementById('transactionsList');
+            if (!container) return;
+
+            container.innerHTML = transactions.slice(0, 5).map(t => `
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <div class="transaction-icon">
+                            <i class="fas ${t.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up'}" style="color: ${t.type === 'deposit' ? '#10B981' : '#EF4444'}"></i>
+                        </div>
+                        <div class="transaction-details">
+                            <h4>${t.description}</h4>
+                            <p>${t.date}</p>
+                        </div>
+                    </div>
+                    <div class="transaction-amount ${t.type === 'deposit' ? 'positive' : 'negative'}">
+                        ${t.type === 'deposit' ? '+' : '-'} ${t.amount.toLocaleString()} ₽
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMyCourses() {
+            const container = document.getElementById('myCoursesList');
+            if (!container) return;
+
+            if (myCoursesData.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#94A3D8;">У вас пока нет курсов. Перейдите на главную и запишитесь на первый курс!</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="courses-mini-grid">
+                    ${myCoursesData.map(course => `
+                        <div class="mini-course-card">
+                            <div class="mini-course-title">${escapeHtml(course.title)}</div>
+                            <div class="mini-progress-bar">
+                                <div class="mini-progress-fill" style="width: ${course.progress}%;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 12px 0;">
+                                <span style="font-size: 13px;">Прогресс: ${course.progress}%</span>
+                                <span style="font-size: 13px;">${Math.floor(course.progress / 100 * course.totalLessons)}/${course.totalLessons} уроков</span>
+                            </div>
+                            <button class="btn-primary" style="width:100%; padding: 10px;" onclick="continueCourse(${course.id})">
+                                <i class="fas fa-play"></i> ${course.progress > 0 ? 'Продолжить' : 'Начать'}
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function continueCourse(courseId) {
+            showToast(`🎓 Переход к курсу...`, 'info');
+            setTimeout(() => {
+                window.location.href = `learning.html?course=${courseId}`;
+            }, 1000);
+        }
+
+        function openTopupModal() {
+            document.getElementById('topupModal').classList.add('active');
+        }
+
+        function closeTopupModal() {
+            document.getElementById('topupModal').classList.remove('active');
+        }
+
+        function processTopup() {
+            const amount = parseInt(document.getElementById('topupAmount').value);
+            if (!amount || amount < 100) {
+                showToast('Введите сумму пополнения (минимум 100 ₽)', 'error');
+                return;
+            }
+
+            userBalance += amount;
+            transactions.unshift({
+                id: Date.now(),
+                type: "deposit",
+                amount: amount,
+                date: new Date().toISOString().split('T')[0],
+                description: "Пополнение баланса"
+            });
+
+            updateHeaderBalance();
+            renderTransactions();
+            closeTopupModal();
+            showToast(`✅ Баланс пополнен на ${amount.toLocaleString()} ₽`, 'success');
+            document.getElementById('topupAmount').value = '';
+        }
+
+        function showToast(message, type) {
+            const oldToast = document.querySelector('.custom-toast');
+            if (oldToast) oldToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+            toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+            document.body.appendChild(toast);
+
+            toast.style.position = 'fixed';
+            toast.style.bottom = '30px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.background = type === 'success' ? '#0F2A1F' : (type === 'error' ? '#2A1A2A' : '#1A2A3A');
+            toast.style.border = `1px solid ${type === 'success' ? '#10B981' : (type === 'error' ? '#EF4444' : '#3B82F6')}`;
+            toast.style.color = '#fff';
+            toast.style.padding = '12px 24px';
+            toast.style.borderRadius = '40px';
+            toast.style.zIndex = '9999';
+            toast.style.fontFamily = "'Inter', sans-serif";
+            toast.style.fontSize = '14px';
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const section = item.getAttribute('data-section');
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(`section-${section}`).classList.add('active');
+            });
+        });
+
+        document.getElementById('profileForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            showToast('Профиль успешно обновлён!', 'success');
+        });
+
+        document.getElementById('securityForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const currentPwd = document.getElementById('currentPassword').value;
+            const newPwd = document.getElementById('newPassword').value;
+            const confirmPwd = document.getElementById('confirmPassword').value;
+
+            if (!currentPwd || !newPwd || !confirmPwd) {
+                showToast('Заполните все поля', 'error');
+                return;
+            }
+
+            if (newPwd.length < 6) {
+                showToast('Новый пароль должен содержать минимум 6 символов', 'error');
+                return;
+            }
+
+            if (newPwd !== confirmPwd) {
+                showToast('Пароли не совпадают', 'error');
+                return;
+            }
+
+            showToast('Пароль успешно изменён!', 'success');
+            document.getElementById('securityForm').reset();
+        });
+
+        document.getElementById('topupModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('topupModal')) closeTopupModal();
         });
 
         updateHeaderBalance();
+        updateStats();
         renderTransactions();
-        closeTopupModal();
-        showToast(`✅ Баланс пополнен на ${amount.toLocaleString()} ₽`, 'success');
-        document.getElementById('topupAmount').value = '';
-    }
-
-    function showToast(message, type) {
-        const oldToast = document.querySelector('.custom-toast');
-        if (oldToast) oldToast.remove();
-
-        const toast = document.createElement('div');
-        toast.className = 'custom-toast';
-        const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
-        toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
-        document.body.appendChild(toast);
-
-        toast.style.position = 'fixed';
-        toast.style.bottom = '30px';
-        toast.style.left = '50%';
-        toast.style.transform = 'translateX(-50%)';
-        toast.style.background = type === 'success' ? '#0F2A1F' : (type === 'error' ? '#2A1A2A' : '#1A2A3A');
-        toast.style.border = `1px solid ${type === 'success' ? '#10B981' : (type === 'error' ? '#EF4444' : '#3B82F6')}`;
-        toast.style.color = '#fff';
-        toast.style.padding = '12px 24px';
-        toast.style.borderRadius = '40px';
-        toast.style.zIndex = '9999';
-        toast.style.fontFamily = "'Inter', sans-serif";
-        toast.style.fontSize = '14px';
-
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const section = item.getAttribute('data-section');
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(`section-${section}`).classList.add('active');
-        });
-    });
-
-    document.getElementById('profileForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        showToast('Профиль успешно обновлён!', 'success');
-    });
-
-    document.getElementById('securityForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const currentPwd = document.getElementById('currentPassword').value;
-        const newPwd = document.getElementById('newPassword').value;
-        const confirmPwd = document.getElementById('confirmPassword').value;
-
-        if (!currentPwd || !newPwd || !confirmPwd) {
-            showToast('Заполните все поля', 'error');
-            return;
-        }
-
-        if (newPwd.length < 6) {
-            showToast('Новый пароль должен содержать минимум 6 символов', 'error');
-            return;
-        }
-
-        if (newPwd !== confirmPwd) {
-            showToast('Пароли не совпадают', 'error');
-            return;
-        }
-
-        showToast('Пароль успешно изменён!', 'success');
-        document.getElementById('securityForm').reset();
-    });
-
-    document.getElementById('topupModal').addEventListener('click', (e) => {
-        if (e.target === document.getElementById('topupModal')) closeTopupModal();
-    });
-
-    updateHeaderBalance();
-    updateStats();
-    renderTransactions();
-    renderMyCourses();
+        renderMyCourses();
     </script>
 </body>
 </html>

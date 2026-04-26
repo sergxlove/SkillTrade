@@ -31,6 +31,7 @@ body {
     padding: 0 32px;
 }
 
+/* Header */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -54,30 +55,29 @@ body {
     text-decoration: none;
 }
 
-.logo i {
-    background: none;
-    color: #3B82F6;
-    font-size: 30px;
-}
+    .logo i {
+        background: none;
+        color: #3B82F6;
+        font-size: 30px;
+    }
 
 .nav-links {
     display: flex;
-    gap: 24px;
+    gap: 28px;
     align-items: center;
     flex-wrap: wrap;
 }
 
-.nav-links a {
-    color: #B9C7E6;
-    text-decoration: none;
-    font-weight: 500;
-    transition: 0.2s;
-}
+    .nav-links a {
+        color: #B9C7E6;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.2s;
+    }
 
-.nav-links a:hover, .nav-links a.active {
-    color: #3B82F6;
-
-}
+        .nav-links a:hover, .nav-links a.active {
+            color: #3B82F6;
+        }
 
 .user-menu {
     display: flex;
@@ -90,16 +90,28 @@ body {
     cursor: pointer;
 }
 
-.user-menu i {
-    font-size: 20px;
-    color: #3B82F6;
+    .user-menu i {
+        font-size: 18px;
+        color: #3B82F6;
+    }
+
+.logout-btn {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid #EF4444;
+    color: #EF4444;
+    padding: 6px 16px;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s;
 }
 
-.balance {
-    font-weight: 700;
-    color: #F0B90B;
-}
+    .logout-btn:hover {
+        background: #EF4444;
+        color: white;
+    }
 
+/* Hero section */
 .hero {
     display: flex;
     justify-content: space-between;
@@ -136,25 +148,26 @@ body {
     max-width: 500px;
 }
 
-.search-bar input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 16px;
-    outline: none;
-}
+    .search-bar input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 16px;
+        outline: none;
+    }
 
-.search-bar button {
-    background: #3B82F6;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 40px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-}
+    .search-bar button {
+        background: #3B82F6;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 40px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
 
+/* Мои курсы */
 .my-courses-section {
     margin: 40px 0 30px;
 }
@@ -168,10 +181,10 @@ body {
     gap: 12px;
 }
 
-.section-title i {
-    color: #3B82F6;
-    font-size: 28px;
-}
+    .section-title i {
+        color: #3B82F6;
+        font-size: 28px;
+    }
 
 .my-courses-grid {
     display: grid;
@@ -189,43 +202,12 @@ body {
     transition: 0.2s;
 }
 
-.my-course-card:hover {
-    transform: translateY(-4px);
-    border-color: #3B82F6;
-}
+    .my-course-card:hover {
+        transform: translateY(-4px);
+        border-color: #3B82F6;
+    }
 
-.progress-section {
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.05));
-}
-
-.progress-bar-container {
-    background: #1F2B46;
-    border-radius: 20px;
-    height: 10px;
-    margin: 12px 0;
-    overflow: hidden;
-}
-
-.progress-bar {
-    background: linear-gradient(95deg, #3B82F6, #8B5CF6);
-    border-radius: 20px;
-    height: 100%;
-    transition: width 0.3s;
-}
-
-.continue-btn {
-    background: linear-gradient(95deg, #3B82F6, #8B5CF6);
-    border: none;
-    padding: 12px;
-    border-radius: 20px;
-    width: 100%;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 16px;
-}
-
+/* Фильтры */
 .filters {
     display: flex;
     flex-wrap: wrap;
@@ -251,20 +233,21 @@ body {
     transition: 0.2s;
 }
 
-.filter-chip.active, .filter-chip:hover {
-    background: #1E2A4A;
-    border-color: #3B82F6;
-    color: #3B82F6;
-}
+    .filter-chip.active, .filter-chip:hover {
+        background: #1E2A4A;
+        border-color: #3B82F6;
+        color: #3B82F6;
+    }
 
 .result-count {
     font-size: 14px;
     color: #94A3D8;
 }
 
+/* Сетка курсов */
 .courses-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 28px;
     margin: 20px 0 50px;
 }
@@ -276,13 +259,14 @@ body {
     border: 1px solid rgba(59, 130, 246, 0.2);
     overflow: hidden;
     transition: 0.25s;
+    cursor: pointer;
 }
 
-.course-card:hover {
-    transform: translateY(-6px);
-    border-color: #3B82F6;
-    background: rgba(20, 30, 55, 0.8);
-}
+    .course-card:hover {
+        transform: translateY(-6px);
+        border-color: #3B82F6;
+        background: rgba(20, 30, 55, 0.8);
+    }
 
 .card-img {
     height: 160px;
@@ -296,7 +280,7 @@ body {
 }
 
 .level-badge {
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
     padding: 4px 12px;
     border-radius: 40px;
@@ -356,9 +340,9 @@ body {
     font-size: 13px;
 }
 
-.btn-enroll:hover {
-    background: linear-gradient(95deg, #3B82F6, #8B5CF6);
-}
+    .btn-enroll:hover {
+        background: linear-gradient(95deg, #3B82F6, #8B5CF6);
+    }
 
 .btn-subscribed {
     background: rgba(16, 185, 129, 0.2);
@@ -366,6 +350,39 @@ body {
     color: #10B981;
 }
 
+.progress-section {
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
+}
+
+.progress-bar-container {
+    background: #1F2B46;
+    border-radius: 20px;
+    height: 8px;
+    margin: 12px 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(95deg, #3B82F6, #8B5CF6);
+    border-radius: 20px;
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.continue-btn {
+    background: linear-gradient(95deg, #3B82F6, #8B5CF6);
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    width: 100%;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+}
+
+/* Modal */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -383,15 +400,15 @@ body {
     transition: 0.2s;
 }
 
-.modal-overlay.active {
-    visibility: visible;
-    opacity: 1;
-}
+    .modal-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
 
 .modal {
     background: #0E1629;
     border-radius: 32px;
-    max-width: 700px;
+    max-width: 600px;
     width: 90%;
     max-height: 85vh;
     overflow-y: auto;
@@ -406,9 +423,9 @@ body {
     border-bottom: 1px solid #1F2B46;
 }
 
-.modal-header h2 {
-    font-size: 24px;
-}
+    .modal-header h2 {
+        font-size: 24px;
+    }
 
 .close-modal {
     background: none;
@@ -423,17 +440,17 @@ body {
 }
 
 .modal-detail {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
-.modal-detail strong {
-    color: #8BA2EE;
-    width: 110px;
-    display: inline-block;
-}
+    .modal-detail strong {
+        color: #8BA2EE;
+        width: 110px;
+        display: inline-block;
+    }
 
 .enroll-section {
-    background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.08));
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.08));
     border-radius: 24px;
     padding: 20px;
     margin-top: 20px;
@@ -448,6 +465,16 @@ body {
     font-size: 28px;
     font-weight: 800;
     color: #FBBF24;
+}
+
+.btn-primary {
+    background: linear-gradient(95deg, #3B82F6, #8B5CF6);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
 }
 
 footer {
@@ -473,5 +500,13 @@ footer {
 
     .filter-buttons {
         justify-content: center;
+    }
+
+    .my-courses-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .courses-grid {
+        grid-template-columns: 1fr;
     }
 }

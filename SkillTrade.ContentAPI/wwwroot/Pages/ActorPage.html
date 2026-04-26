@@ -11,20 +11,20 @@
 <body>
     <div class="container">
         <div class="navbar">
-            <a href="#" class="logo">
+            <a href="index.html" class="logo">
                 <i class="fas fa-chalkboard-user"></i>
                 <span>SkillTrade</span>
             </a>
             <div class="nav-links">
-                <a href="#">Главная</a>
+                <a href="index.html">Главная</a>
+                <a href="profile.html">Профиль</a>
                 <a href="#" class="active">Панель автора</a>
-                <a href="#">Выйти</a>
             </div>
-            <div class="user-menu">
+            <div class="user-menu" onclick="logout()">
                 <i class="fas fa-user"></i>
                 <span>Алексей Иванов</span>
-                <i class="fas fa-wallet"></i>
-                <span class="balance" id="authorBalance">78 500 ₽</span>
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="logout-btn">Выход</span>
             </div>
         </div>
 
@@ -109,6 +109,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal-overlay" id="editCourseModal">
         <div class="modal">
             <div class="modal-header">
@@ -150,6 +151,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal-overlay" id="lessonsModal">
         <div class="modal modal-large">
             <div class="modal-header">
@@ -178,6 +180,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal-overlay" id="editLessonModal">
         <div class="modal modal-large">
             <div class="modal-header">
@@ -205,514 +208,522 @@
     </footer>
 
     <script>
-    let authorCourses = [
-        {
-            id: 1,
-            title: "Fullstack JavaScript: от новичка до PRO",
-            description: "Освой React, Node.js, MongoDB и создавай современные веб-приложения.",
-            level: "middle",
-            price: 4990,
-            lessonsCount: 48,
-            durationTimeHours: 46,
-            createdAt: "2025-01-15",
-            status: "published",
-            students: 156,
-            revenue: 778440,
-            rating: 4.8
-        },
-        {
-            id: 2,
-            title: "React + TypeScript: enterprise приложения",
-            description: "Погружение в современный frontend: хуки, контекст, RTK Query.",
-            level: "middle",
-            price: 5490,
-            lessonsCount: 38,
-            durationTimeHours: 34,
-            createdAt: "2025-02-20",
-            status: "published",
-            students: 89,
-            revenue: 488610,
-            rating: 4.9
-        },
-        {
-            id: 3,
-            title: "Микросервисы на C# .NET",
-            description: "Создание масштабируемых бэкенд-решений",
-            level: "advanced",
-            price: 7490,
-            lessonsCount: 52,
-            durationTimeHours: 48,
-            createdAt: "2025-03-10",
-            status: "draft",
-            students: 0,
-            revenue: 0,
-            rating: 0
-        }
-    ];
+        let authorCourses = [
+            {
+                id: 1,
+                title: "Fullstack JavaScript: от новичка до PRO",
+                description: "Освой React, Node.js, MongoDB и создавай современные веб-приложения.",
+                level: "middle",
+                price: 4990,
+                lessonsCount: 48,
+                durationTimeHours: 46,
+                createdAt: "2025-01-15",
+                status: "published",
+                students: 156,
+                revenue: 778440,
+                rating: 4.8
+            },
+            {
+                id: 2,
+                title: "React + TypeScript: enterprise приложения",
+                description: "Погружение в современный frontend: хуки, контекст, RTK Query.",
+                level: "middle",
+                price: 5490,
+                lessonsCount: 38,
+                durationTimeHours: 34,
+                createdAt: "2025-02-20",
+                status: "published",
+                students: 89,
+                revenue: 488610,
+                rating: 4.9
+            },
+            {
+                id: 3,
+                title: "Микросервисы на C# .NET",
+                description: "Создание масштабируемых бэкенд-решений",
+                level: "advanced",
+                price: 7490,
+                lessonsCount: 52,
+                durationTimeHours: 48,
+                createdAt: "2025-03-10",
+                status: "draft",
+                students: 0,
+                revenue: 0,
+                rating: 0
+            }
+        ];
 
-    let lessonsData = {
-        1: [
-            { id: 101, title: "Введение в JavaScript", content: "<p>Основы JS, переменные, типы данных</p>", createdAt: "2025-01-10" },
-            { id: 102, title: "React Components", content: "<p>Компонентный подход, props, state</p>", createdAt: "2025-01-12" }
-        ],
-        2: [
-            { id: 201, title: "TypeScript Basics", content: "<p>Типизация, интерфейсы, generics</p>", createdAt: "2025-02-18" }
-        ],
-        3: []
-    };
-
-    let currentEditCourseId = null;
-    let currentEditLessonId = null;
-    let currentEditCourseIdForLesson = null;
-
-    function createToolbar(editorId, toolbarId) {
-        const toolbar = document.getElementById(toolbarId);
-        if (!toolbar) return;
-
-        toolbar.innerHTML = `
-            <div class="editor-toolbar-group">
-                <button onclick="execCommand('bold', '${editorId}')"><b>B</b></button>
-                <button onclick="execCommand('italic', '${editorId}')"><i>I</i></button>
-                <button onclick="execCommand('underline', '${editorId}')"><u>U</u></button>
-            </div>
-            <div class="editor-toolbar-group">
-                <button onclick="execCommand('formatBlock', '${editorId}', 'h3')">H3</button>
-                <button onclick="execCommand('formatBlock', '${editorId}', 'h4')">H4</button>
-                <button onclick="execCommand('formatBlock', '${editorId}', 'p')">P</button>
-            </div>
-            <div class="editor-toolbar-group">
-                <button onclick="execCommand('insertUnorderedList', '${editorId}')"><i class="fas fa-list-ul"></i></button>
-                <button onclick="execCommand('insertOrderedList', '${editorId}')"><i class="fas fa-list-ol"></i></button>
-            </div>
-            <div class="editor-toolbar-group">
-                <button onclick="insertLink('${editorId}')"><i class="fas fa-link"></i></button>
-                <button onclick="insertImage('${editorId}')"><i class="fas fa-image"></i></button>
-            </div>
-        `;
-    }
-
-    function execCommand(command, editorId, value = null) {
-        const editor = document.getElementById(editorId);
-        if (!editor) return;
-        editor.focus();
-        if (value) {
-            document.execCommand(command, false, value);
-        } else {
-            document.execCommand(command, false, null);
-        }
-    }
-
-    function insertLink(editorId) {
-        const url = prompt('Введите URL ссылки:', 'https://');
-        if (url) {
-            execCommand('createLink', editorId, url);
-        }
-    }
-
-    function insertImage(editorId) {
-        const url = prompt('Введите URL изображения:', 'https://via.placeholder.com/600x300');
-        if (url) {
-            execCommand('insertImage', editorId, url);
-        }
-    }
-
-    function renderCourses() {
-        const grid = document.getElementById('coursesGrid');
-        if (!grid) return;
-
-        if (authorCourses.length === 0) {
-            grid.innerHTML = '<p style="text-align:center; padding:60px;">У вас пока нет курсов. Создайте первый!</p>';
-            return;
-        }
-
-        let html = '';
-        for (let i = 0; i < authorCourses.length; i++) {
-            const course = authorCourses[i];
-            const statusClass = course.status === 'published' ? 'status-published' : 'status-draft';
-            const statusText = course.status === 'published' ? 'Опубликован' : 'Черновик';
-            const levelText = course.level === 'beginner' ? 'Начинающий' : (course.level === 'middle' ? 'Средний' : 'Продвинутый');
-
-            html += `
-                <div class="course-card">
-                    <div class="course-header">
-                        <div class="course-title">${escapeHtml(course.title)}</div>
-                        <span class="course-status ${statusClass}">${statusText}</span>
-                    </div>
-                    <div class="course-body">
-                        <div class="course-meta">
-                            <span><i class="far fa-calendar"></i> ${course.createdAt}</span>
-                            <span>${levelText}</span>
-                        </div>
-                        <div class="course-stats">
-                            <span><i class="fas fa-users"></i> ${course.students} студ.</span>
-                            <span><i class="fas fa-star"></i> ${course.rating}</span>
-                            <span><i class="fas fa-book"></i> ${course.lessonsCount} уроков</span>
-                        </div>
-                        <div class="course-price">${course.price.toLocaleString()} ₽</div>
-                    </div>
-                    <div class="course-actions">
-                        <button class="btn-icon" onclick="openEditCourseModal(${course.id})"><i class="fas fa-edit"></i> Редактировать</button>
-                        <button class="btn-icon" onclick="manageLessons(${course.id})"><i class="fas fa-list"></i> Уроки</button>
-                        <button class="btn-icon" onclick="togglePublish(${course.id})">
-                            <i class="fas ${course.status === 'published' ? 'fa-eye-slash' : 'fa-eye'}"></i>
-                            ${course.status === 'published' ? 'Снять' : 'Опубликовать'}
-                        </button>
-                        <button class="btn-icon btn-danger" onclick="deleteCourse(${course.id})"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-            `;
-        }
-        grid.innerHTML = html;
-        updateStats();
-    }
-
-    function updateStats() {
-        const publishedCourses = authorCourses.filter(function(c) { return c.status === 'published'; });
-        let totalStudents = 0;
-        let totalRevenue = 0;
-        let totalRating = 0;
-
-        for (let i = 0; i < publishedCourses.length; i++) {
-            totalStudents += publishedCourses[i].students;
-            totalRevenue += publishedCourses[i].revenue;
-            totalRating += publishedCourses[i].rating;
-        }
-
-        const avgRating = publishedCourses.length > 0 ? (totalRating / publishedCourses.length).toFixed(1) : 0;
-
-        document.getElementById('totalCourses').innerText = authorCourses.length;
-        document.getElementById('totalStudents').innerText = totalStudents;
-        document.getElementById('totalRevenue').innerHTML = totalRevenue.toLocaleString() + ' ₽';
-        document.getElementById('avgRating').innerText = avgRating;
-    }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    function stripHtml(html) {
-        const temp = document.createElement('div');
-        temp.innerHTML = html;
-        return temp.textContent || temp.innerText || '';
-    }
-
-    function openEditCourseModal(courseId) {
-        const course = authorCourses.find(c => c.id === courseId);
-        if (!course) return;
-
-        currentEditCourseId = courseId;
-        document.getElementById('editCourseTitle').value = course.title;
-        document.getElementById('editCourseDescription').value = course.description;
-        document.getElementById('editCourseLevel').value = course.level;
-        document.getElementById('editCoursePrice').value = course.price;
-        document.getElementById('editCourseStatus').value = course.status;
-
-        document.getElementById('editCourseModal').classList.add('active');
-    }
-
-    function closeEditCourseModal() {
-        document.getElementById('editCourseModal').classList.remove('active');
-        currentEditCourseId = null;
-    }
-
-    document.getElementById('editCourseForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const course = authorCourses.find(c => c.id === currentEditCourseId);
-        if (course) {
-            course.title = document.getElementById('editCourseTitle').value.trim();
-            course.description = document.getElementById('editCourseDescription').value.trim();
-            course.level = document.getElementById('editCourseLevel').value;
-            course.price = parseInt(document.getElementById('editCoursePrice').value);
-            course.status = document.getElementById('editCourseStatus').value;
-
-            renderCourses();
-            closeEditCourseModal();
-            showToast('Курс обновлён', 'success');
-        }
-    });
-
-    function manageLessons(courseId) {
-        currentEditCourseId = courseId;
-        const course = authorCourses.find(c => c.id === courseId);
-        if (course) {
-            document.getElementById('modalCourseTitle').innerText = 'Уроки: ' + course.title;
-        }
-        renderLessonsList(courseId);
-        document.getElementById('lessonsModal').classList.add('active');
-    }
-
-    function renderLessonsList(courseId) {
-        const courseLessons = lessonsData[courseId] || [];
-        const container = document.getElementById('lessonsList');
-        if (!container) return;
-
-        if (courseLessons.length === 0) {
-            container.innerHTML = '<p style="text-align:center; padding:40px;">Уроков пока нет. Добавьте первый урок!</p>';
-            return;
-        }
-
-        let html = '<div class="lessons-list">';
-        for (let i = 0; i < courseLessons.length; i++) {
-            const lesson = courseLessons[i];
-            const plainText = stripHtml(lesson.content);
-            const shortContent = plainText.length > 100 ? plainText.substring(0, 100) + '...' : plainText;
-
-            html += `
-                <div class="lesson-item">
-                    <div class="lesson-header">
-                        <div class="lesson-title">${escapeHtml(lesson.title)}</div>
-                        <div class="lesson-actions">
-                            <button class="btn-icon" onclick="openEditLessonModal(${courseId}, ${lesson.id})">
-                                <i class="fas fa-edit"></i> Редактировать
-                            </button>
-                            <button class="btn-icon btn-danger" onclick="deleteLesson(${courseId}, ${lesson.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="lesson-preview">${escapeHtml(shortContent)}</div>
-                    <small><i class="far fa-clock"></i> ${lesson.createdAt}</small>
-                </div>
-            `;
-        }
-        html += '</div>';
-        container.innerHTML = html;
-    }
-
-    function openEditLessonModal(courseId, lessonId) {
-        const lessons = lessonsData[courseId];
-        const lesson = lessons.find(l => l.id === lessonId);
-        if (!lesson) return;
-
-        currentEditLessonId = lessonId;
-        currentEditCourseIdForLesson = courseId;
-
-        document.getElementById('editLessonTitle').value = lesson.title;
-        const editor = document.getElementById('editLessonEditor');
-        editor.innerHTML = lesson.content;
-
-        createToolbar('editLessonEditor', 'editLessonToolbar');
-        document.getElementById('editLessonModal').classList.add('active');
-    }
-
-    function closeEditLessonModal() {
-        document.getElementById('editLessonModal').classList.remove('active');
-        currentEditLessonId = null;
-        currentEditCourseIdForLesson = null;
-    }
-
-    function saveEditedLesson() {
-        const newTitle = document.getElementById('editLessonTitle').value.trim();
-        const newContent = document.getElementById('editLessonEditor').innerHTML;
-
-        if (!newTitle) {
-            showToast('Введите название урока', 'error');
-            return;
-        }
-
-        const lessons = lessonsData[currentEditCourseIdForLesson];
-        const lesson = lessons.find(l => l.id === currentEditLessonId);
-        if (lesson) {
-            lesson.title = newTitle;
-            lesson.content = newContent;
-        }
-
-        renderLessonsList(currentEditCourseIdForLesson);
-        closeEditLessonModal();
-        showToast('Урок обновлён', 'success');
-    }
-
-    function deleteLesson(courseId, lessonId) {
-        if (!confirm('Удалить урок?')) return;
-        lessonsData[courseId] = lessonsData[courseId].filter(l => l.id !== lessonId);
-
-        const course = authorCourses.find(c => c.id === courseId);
-        if (course) course.lessonsCount = lessonsData[courseId].length;
-
-        renderLessonsList(courseId);
-        renderCourses();
-        showToast('Урок удалён', 'success');
-    }
-
-    function showAddLessonForm() {
-        document.getElementById('addLessonForm').style.display = 'block';
-        const editor = document.getElementById('newLessonEditor');
-        editor.innerHTML = '<p>Введите содержание урока...</p>';
-        createToolbar('newLessonEditor', 'newLessonToolbar');
-    }
-
-    function hideAddLessonForm() {
-        document.getElementById('addLessonForm').style.display = 'none';
-        document.getElementById('newLessonTitle').value = '';
-        document.getElementById('newLessonEditor').innerHTML = '';
-    }
-
-    function addLesson() {
-        const title = document.getElementById('newLessonTitle').value.trim();
-        const content = document.getElementById('newLessonEditor').innerHTML;
-
-        if (!title) {
-            showToast('Введите название урока', 'error');
-            return;
-        }
-
-        if (!content || content === '<p>Введите содержание урока...</p>') {
-            showToast('Введите содержание урока', 'error');
-            return;
-        }
-
-        if (!lessonsData[currentEditCourseId]) {
-            lessonsData[currentEditCourseId] = [];
-        }
-
-        const newLesson = {
-            id: Date.now(),
-            title: title,
-            content: content,
-            createdAt: new Date().toISOString().split('T')[0]
+        let lessonsData = {
+            1: [
+                { id: 101, title: "Введение в JavaScript", content: "<p>Основы JS, переменные, типы данных</p>", createdAt: "2025-01-10" },
+                { id: 102, title: "React Components", content: "<p>Компонентный подход, props, state</p>", createdAt: "2025-01-12" }
+            ],
+            2: [
+                { id: 201, title: "TypeScript Basics", content: "<p>Типизация, интерфейсы, generics</p>", createdAt: "2025-02-18" }
+            ],
+            3: []
         };
 
-        lessonsData[currentEditCourseId].push(newLesson);
+        let currentEditCourseId = null;
+        let currentEditLessonId = null;
+        let currentEditCourseIdForLesson = null;
 
-        const course = authorCourses.find(c => c.id === currentEditCourseId);
-        if (course) course.lessonsCount = lessonsData[currentEditCourseId].length;
+        function logout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.removeItem('skilltrade_token');
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
 
-        renderLessonsList(currentEditCourseId);
-        hideAddLessonForm();
-        renderCourses();
-        showToast('Урок добавлен', 'success');
-    }
+        function createToolbar(editorId, toolbarId) {
+            const toolbar = document.getElementById(toolbarId);
+            if (!toolbar) return;
 
-    function closeLessonsModal() {
-        document.getElementById('lessonsModal').classList.remove('active');
-        currentEditCourseId = null;
-        hideAddLessonForm();
-    }
+            toolbar.innerHTML = `
+                <div class="editor-toolbar-group">
+                    <button onclick="execCommand('bold', '${editorId}')"><b>B</b></button>
+                    <button onclick="execCommand('italic', '${editorId}')"><i>I</i></button>
+                    <button onclick="execCommand('underline', '${editorId}')"><u>U</u></button>
+                </div>
+                <div class="editor-toolbar-group">
+                    <button onclick="execCommand('formatBlock', '${editorId}', 'h3')">H3</button>
+                    <button onclick="execCommand('formatBlock', '${editorId}', 'h4')">H4</button>
+                    <button onclick="execCommand('formatBlock', '${editorId}', 'p')">P</button>
+                </div>
+                <div class="editor-toolbar-group">
+                    <button onclick="execCommand('insertUnorderedList', '${editorId}')"><i class="fas fa-list-ul"></i></button>
+                    <button onclick="execCommand('insertOrderedList', '${editorId}')"><i class="fas fa-list-ol"></i></button>
+                </div>
+                <div class="editor-toolbar-group">
+                    <button onclick="insertLink('${editorId}')"><i class="fas fa-link"></i></button>
+                    <button onclick="insertImage('${editorId}')"><i class="fas fa-image"></i></button>
+                </div>
+            `;
+        }
 
-    function togglePublish(courseId) {
-        const course = authorCourses.find(c => c.id === courseId);
-        if (course) {
-            if (course.status === 'published') {
-                if (confirm('Снять курс с публикации?')) {
-                    course.status = 'draft';
-                    showToast('Курс снят с публикации', 'info');
-                }
+        function execCommand(command, editorId, value = null) {
+            const editor = document.getElementById(editorId);
+            if (!editor) return;
+            editor.focus();
+            if (value) {
+                document.execCommand(command, false, value);
             } else {
-                if (course.lessonsCount === 0) {
-                    showToast('Нельзя опубликовать курс без уроков', 'error');
-                    return;
-                }
-                course.status = 'published';
-                showToast('Курс опубликован', 'success');
+                document.execCommand(command, false, null);
             }
-            renderCourses();
-        }
-    }
-
-    function deleteCourse(courseId) {
-        if (!confirm('Удалить курс? Все уроки также будут удалены.')) return;
-        authorCourses = authorCourses.filter(c => c.id !== courseId);
-        delete lessonsData[courseId];
-        renderCourses();
-        showToast('Курс удалён', 'success');
-    }
-
-    function showToast(message, type) {
-        const oldToast = document.querySelector('.custom-toast');
-        if (oldToast) oldToast.remove();
-
-        const toast = document.createElement('div');
-        toast.className = 'custom-toast';
-        const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
-        toast.innerHTML = '<i class="fas ' + icon + '"></i> ' + message;
-        document.body.appendChild(toast);
-
-        toast.style.position = 'fixed';
-        toast.style.bottom = '30px';
-        toast.style.left = '50%';
-        toast.style.transform = 'translateX(-50%)';
-        toast.style.background = type === 'success' ? '#0F2A1F' : (type === 'error' ? '#2A1A2A' : '#1A2A3A');
-        toast.style.border = '1px solid ' + (type === 'success' ? '#10B981' : (type === 'error' ? '#EF4444' : '#3B82F6'));
-        toast.style.color = '#fff';
-        toast.style.padding = '12px 24px';
-        toast.style.borderRadius = '40px';
-        toast.style.zIndex = '9999';
-        toast.style.fontFamily = "'Inter', sans-serif";
-        toast.style.fontSize = '14px';
-
-        setTimeout(function() {
-            toast.style.opacity = '0';
-            setTimeout(function() { toast.remove(); }, 300);
-        }, 2500);
-    }
-
-    document.getElementById('createCourseForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const title = document.getElementById('courseTitle').value.trim();
-        const description = document.getElementById('courseDescription').value.trim();
-        const level = document.getElementById('courseLevel').value;
-        const price = parseInt(document.getElementById('coursePrice').value);
-
-        if (!title || !description || !price) {
-            showToast('Заполните все обязательные поля', 'error');
-            return;
         }
 
-        const newCourse = {
-            id: Date.now(),
-            title: title,
-            description: description,
-            level: level,
-            price: price,
-            lessonsCount: 0,
-            durationTimeHours: 0,
-            createdAt: new Date().toISOString().split('T')[0],
-            status: 'draft',
-            students: 0,
-            revenue: 0,
-            rating: 0
-        };
-
-        authorCourses.unshift(newCourse);
-        lessonsData[newCourse.id] = [];
-        renderCourses();
-
-        document.getElementById('courseTitle').value = '';
-        document.getElementById('courseDescription').value = '';
-        document.getElementById('coursePrice').value = '';
-
-        showToast('Курс создан! Добавьте уроки и опубликуйте.', 'success');
-
-        const coursesTab = document.querySelector('[data-tab="courses"]');
-        if (coursesTab) coursesTab.click();
-    });
-
-    const tabs = document.querySelectorAll('.tab-btn');
-    for (let i = 0; i < tabs.length; i++) {
-        tabs[i].addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            for (let j = 0; j < tabs.length; j++) {
-                tabs[j].classList.remove('active');
+        function insertLink(editorId) {
+            const url = prompt('Введите URL ссылки:', 'https://');
+            if (url) {
+                execCommand('createLink', editorId, url);
             }
-            this.classList.add('active');
+        }
 
-            const contents = document.querySelectorAll('.tab-content');
-            for (let j = 0; j < contents.length; j++) {
-                contents[j].classList.remove('active');
+        function insertImage(editorId) {
+            const url = prompt('Введите URL изображения:', 'https://via.placeholder.com/600x300');
+            if (url) {
+                execCommand('insertImage', editorId, url);
             }
-            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        function renderCourses() {
+            const grid = document.getElementById('coursesGrid');
+            if (!grid) return;
+
+            if (authorCourses.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; padding:60px;">У вас пока нет курсов. Создайте первый!</p>';
+                return;
+            }
+
+            let html = '';
+            for (let i = 0; i < authorCourses.length; i++) {
+                const course = authorCourses[i];
+                const statusClass = course.status === 'published' ? 'status-published' : 'status-draft';
+                const statusText = course.status === 'published' ? 'Опубликован' : 'Черновик';
+                const levelText = course.level === 'beginner' ? 'Начинающий' : (course.level === 'middle' ? 'Средний' : 'Продвинутый');
+
+                html += `
+                    <div class="course-card">
+                        <div class="course-header">
+                            <div class="course-title">${escapeHtml(course.title)}</div>
+                            <span class="course-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="course-body">
+                            <div class="course-meta">
+                                <span><i class="far fa-calendar"></i> ${course.createdAt}</span>
+                                <span>${levelText}</span>
+                            </div>
+                            <div class="course-stats">
+                                <span><i class="fas fa-users"></i> ${course.students} студ.</span>
+                                <span><i class="fas fa-star"></i> ${course.rating}</span>
+                                <span><i class="fas fa-book"></i> ${course.lessonsCount} уроков</span>
+                            </div>
+                            <div class="course-price">${course.price.toLocaleString()} ₽</div>
+                        </div>
+                        <div class="course-actions">
+                            <button class="btn-icon" onclick="openEditCourseModal(${course.id})"><i class="fas fa-edit"></i> Редактировать</button>
+                            <button class="btn-icon" onclick="manageLessons(${course.id})"><i class="fas fa-list"></i> Уроки</button>
+                            <button class="btn-icon" onclick="togglePublish(${course.id})">
+                                <i class="fas ${course.status === 'published' ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                ${course.status === 'published' ? 'Снять' : 'Опубликовать'}
+                            </button>
+                            <button class="btn-icon btn-danger" onclick="deleteCourse(${course.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+            updateStats();
+        }
+
+        function updateStats() {
+            const publishedCourses = authorCourses.filter(function (c) { return c.status === 'published'; });
+            let totalStudents = 0;
+            let totalRevenue = 0;
+            let totalRating = 0;
+
+            for (let i = 0; i < publishedCourses.length; i++) {
+                totalStudents += publishedCourses[i].students;
+                totalRevenue += publishedCourses[i].revenue;
+                totalRating += publishedCourses[i].rating;
+            }
+
+            const avgRating = publishedCourses.length > 0 ? (totalRating / publishedCourses.length).toFixed(1) : 0;
+
+            document.getElementById('totalCourses').innerText = authorCourses.length;
+            document.getElementById('totalStudents').innerText = totalStudents;
+            document.getElementById('totalRevenue').innerHTML = totalRevenue.toLocaleString() + ' ₽';
+            document.getElementById('avgRating').innerText = avgRating;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function stripHtml(html) {
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            return temp.textContent || temp.innerText || '';
+        }
+
+        function openEditCourseModal(courseId) {
+            const course = authorCourses.find(c => c.id === courseId);
+            if (!course) return;
+
+            currentEditCourseId = courseId;
+            document.getElementById('editCourseTitle').value = course.title;
+            document.getElementById('editCourseDescription').value = course.description;
+            document.getElementById('editCourseLevel').value = course.level;
+            document.getElementById('editCoursePrice').value = course.price;
+            document.getElementById('editCourseStatus').value = course.status;
+
+            document.getElementById('editCourseModal').classList.add('active');
+        }
+
+        function closeEditCourseModal() {
+            document.getElementById('editCourseModal').classList.remove('active');
+            currentEditCourseId = null;
+        }
+
+        document.getElementById('editCourseForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const course = authorCourses.find(c => c.id === currentEditCourseId);
+            if (course) {
+                course.title = document.getElementById('editCourseTitle').value.trim();
+                course.description = document.getElementById('editCourseDescription').value.trim();
+                course.level = document.getElementById('editCourseLevel').value;
+                course.price = parseInt(document.getElementById('editCoursePrice').value);
+                course.status = document.getElementById('editCourseStatus').value;
+
+                renderCourses();
+                closeEditCourseModal();
+                showToast('Курс обновлён', 'success');
+            }
         });
-    }
 
-    renderCourses();
+        function manageLessons(courseId) {
+            currentEditCourseId = courseId;
+            const course = authorCourses.find(c => c.id === courseId);
+            if (course) {
+                document.getElementById('modalCourseTitle').innerText = 'Уроки: ' + course.title;
+            }
+            renderLessonsList(courseId);
+            document.getElementById('lessonsModal').classList.add('active');
+        }
+
+        function renderLessonsList(courseId) {
+            const courseLessons = lessonsData[courseId] || [];
+            const container = document.getElementById('lessonsList');
+            if (!container) return;
+
+            if (courseLessons.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:40px;">Уроков пока нет. Добавьте первый урок!</p>';
+                return;
+            }
+
+            let html = '<div class="lessons-list">';
+            for (let i = 0; i < courseLessons.length; i++) {
+                const lesson = courseLessons[i];
+                const plainText = stripHtml(lesson.content);
+                const shortContent = plainText.length > 100 ? plainText.substring(0, 100) + '...' : plainText;
+
+                html += `
+                    <div class="lesson-item">
+                        <div class="lesson-header">
+                            <div class="lesson-title">${escapeHtml(lesson.title)}</div>
+                            <div class="lesson-actions">
+                                <button class="btn-icon" onclick="openEditLessonModal(${courseId}, ${lesson.id})">
+                                    <i class="fas fa-edit"></i> Редактировать
+                                </button>
+                                <button class="btn-icon btn-danger" onclick="deleteLesson(${courseId}, ${lesson.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lesson-preview">${escapeHtml(shortContent)}</div>
+                        <small><i class="far fa-clock"></i> ${lesson.createdAt}</small>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function openEditLessonModal(courseId, lessonId) {
+            const lessons = lessonsData[courseId];
+            const lesson = lessons.find(l => l.id === lessonId);
+            if (!lesson) return;
+
+            currentEditLessonId = lessonId;
+            currentEditCourseIdForLesson = courseId;
+
+            document.getElementById('editLessonTitle').value = lesson.title;
+            const editor = document.getElementById('editLessonEditor');
+            editor.innerHTML = lesson.content;
+
+            createToolbar('editLessonEditor', 'editLessonToolbar');
+            document.getElementById('editLessonModal').classList.add('active');
+        }
+
+        function closeEditLessonModal() {
+            document.getElementById('editLessonModal').classList.remove('active');
+            currentEditLessonId = null;
+            currentEditCourseIdForLesson = null;
+        }
+
+        function saveEditedLesson() {
+            const newTitle = document.getElementById('editLessonTitle').value.trim();
+            const newContent = document.getElementById('editLessonEditor').innerHTML;
+
+            if (!newTitle) {
+                showToast('Введите название урока', 'error');
+                return;
+            }
+
+            const lessons = lessonsData[currentEditCourseIdForLesson];
+            const lesson = lessons.find(l => l.id === currentEditLessonId);
+            if (lesson) {
+                lesson.title = newTitle;
+                lesson.content = newContent;
+            }
+
+            renderLessonsList(currentEditCourseIdForLesson);
+            closeEditLessonModal();
+            showToast('Урок обновлён', 'success');
+        }
+
+        function deleteLesson(courseId, lessonId) {
+            if (!confirm('Удалить урок?')) return;
+            lessonsData[courseId] = lessonsData[courseId].filter(l => l.id !== lessonId);
+
+            const course = authorCourses.find(c => c.id === courseId);
+            if (course) course.lessonsCount = lessonsData[courseId].length;
+
+            renderLessonsList(courseId);
+            renderCourses();
+            showToast('Урок удалён', 'success');
+        }
+
+        function showAddLessonForm() {
+            document.getElementById('addLessonForm').style.display = 'block';
+            const editor = document.getElementById('newLessonEditor');
+            editor.innerHTML = '<p>Введите содержание урока...</p>';
+            createToolbar('newLessonEditor', 'newLessonToolbar');
+        }
+
+        function hideAddLessonForm() {
+            document.getElementById('addLessonForm').style.display = 'none';
+            document.getElementById('newLessonTitle').value = '';
+            document.getElementById('newLessonEditor').innerHTML = '';
+        }
+
+        function addLesson() {
+            const title = document.getElementById('newLessonTitle').value.trim();
+            const content = document.getElementById('newLessonEditor').innerHTML;
+
+            if (!title) {
+                showToast('Введите название урока', 'error');
+                return;
+            }
+
+            if (!content || content === '<p>Введите содержание урока...</p>') {
+                showToast('Введите содержание урока', 'error');
+                return;
+            }
+
+            if (!lessonsData[currentEditCourseId]) {
+                lessonsData[currentEditCourseId] = [];
+            }
+
+            const newLesson = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                createdAt: new Date().toISOString().split('T')[0]
+            };
+
+            lessonsData[currentEditCourseId].push(newLesson);
+
+            const course = authorCourses.find(c => c.id === currentEditCourseId);
+            if (course) course.lessonsCount = lessonsData[currentEditCourseId].length;
+
+            renderLessonsList(currentEditCourseId);
+            hideAddLessonForm();
+            renderCourses();
+            showToast('Урок добавлен', 'success');
+        }
+
+        function closeLessonsModal() {
+            document.getElementById('lessonsModal').classList.remove('active');
+            currentEditCourseId = null;
+            hideAddLessonForm();
+        }
+
+        function togglePublish(courseId) {
+            const course = authorCourses.find(c => c.id === courseId);
+            if (course) {
+                if (course.status === 'published') {
+                    if (confirm('Снять курс с публикации?')) {
+                        course.status = 'draft';
+                        showToast('Курс снят с публикации', 'info');
+                    }
+                } else {
+                    if (course.lessonsCount === 0) {
+                        showToast('Нельзя опубликовать курс без уроков', 'error');
+                        return;
+                    }
+                    course.status = 'published';
+                    showToast('Курс опубликован', 'success');
+                }
+                renderCourses();
+            }
+        }
+
+        function deleteCourse(courseId) {
+            if (!confirm('Удалить курс? Все уроки также будут удалены.')) return;
+            authorCourses = authorCourses.filter(c => c.id !== courseId);
+            delete lessonsData[courseId];
+            renderCourses();
+            showToast('Курс удалён', 'success');
+        }
+
+        function showToast(message, type) {
+            const oldToast = document.querySelector('.custom-toast');
+            if (oldToast) oldToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+            toast.innerHTML = '<i class="fas ' + icon + '"></i> ' + message;
+            document.body.appendChild(toast);
+
+            toast.style.position = 'fixed';
+            toast.style.bottom = '30px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.background = type === 'success' ? '#0F2A1F' : (type === 'error' ? '#2A1A2A' : '#1A2A3A');
+            toast.style.border = '1px solid ' + (type === 'success' ? '#10B981' : (type === 'error' ? '#EF4444' : '#3B82F6'));
+            toast.style.color = '#fff';
+            toast.style.padding = '12px 24px';
+            toast.style.borderRadius = '40px';
+            toast.style.zIndex = '9999';
+            toast.style.fontFamily = "'Inter', sans-serif";
+            toast.style.fontSize = '14px';
+
+            setTimeout(function () {
+                toast.style.opacity = '0';
+                setTimeout(function () { toast.remove(); }, 300);
+            }, 2500);
+        }
+
+        document.getElementById('createCourseForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const title = document.getElementById('courseTitle').value.trim();
+            const description = document.getElementById('courseDescription').value.trim();
+            const level = document.getElementById('courseLevel').value;
+            const price = parseInt(document.getElementById('coursePrice').value);
+
+            if (!title || !description || !price) {
+                showToast('Заполните все обязательные поля', 'error');
+                return;
+            }
+
+            const newCourse = {
+                id: Date.now(),
+                title: title,
+                description: description,
+                level: level,
+                price: price,
+                lessonsCount: 0,
+                durationTimeHours: 0,
+                createdAt: new Date().toISOString().split('T')[0],
+                status: 'draft',
+                students: 0,
+                revenue: 0,
+                rating: 0
+            };
+
+            authorCourses.unshift(newCourse);
+            lessonsData[newCourse.id] = [];
+            renderCourses();
+
+            document.getElementById('courseTitle').value = '';
+            document.getElementById('courseDescription').value = '';
+            document.getElementById('coursePrice').value = '';
+
+            showToast('Курс создан! Добавьте уроки и опубликуйте.', 'success');
+
+            const coursesTab = document.querySelector('[data-tab="courses"]');
+            if (coursesTab) coursesTab.click();
+        });
+
+        const tabs = document.querySelectorAll('.tab-btn');
+        for (let i = 0; i < tabs.length; i++) {
+            tabs[i].addEventListener('click', function () {
+                const tabId = this.getAttribute('data-tab');
+                for (let j = 0; j < tabs.length; j++) {
+                    tabs[j].classList.remove('active');
+                }
+                this.classList.add('active');
+
+                const contents = document.querySelectorAll('.tab-content');
+                for (let j = 0; j < contents.length; j++) {
+                    contents[j].classList.remove('active');
+                }
+                document.getElementById('tab-' + tabId).classList.add('active');
+            });
+        }
+
+        renderCourses();
     </script>
 </body>
 </html>

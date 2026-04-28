@@ -8,7 +8,12 @@ namespace SkillTrade.Proxy
             builder.Services.AddReverseProxy()
                 .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
             var app = builder.Build();
+            app.MapGet("/", async context =>
+            {
+                context.Response.Redirect("/api/content/login");
+            });
             app.MapReverseProxy();
+            app.UseStaticFiles();
             app.Run();
         }
     }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>SkillTrade - Вход в аккаунт</title>
-    <link rel="stylesheet" href="../Styles/LoginPage.css"/>
+    <link rel="stylesheet" href="/Styles/LoginPage.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
 </head>
@@ -16,7 +16,7 @@
                 <span>SkillTrade</span>
             </a>
             <div class="nav-links">
-                <a href="/api/content/reg" class="btn-outline-light">Регистрация</a>
+                <a href="register.html" class="btn-outline-light">Регистрация</a>
             </div>
         </div>
     </div>
@@ -32,14 +32,14 @@
                 <div class="input-group">
                     <label class="input-label">Электронная почта или логин</label>
                     <div class="input-wrapper">
-                        <i class="fas fa-envelope"></i>
+                        <i class="fas fa-envelope input-icon"></i>
                         <input type="text" id="loginEmail" placeholder="ivan@skilltrade.ru или ivan123" autocomplete="username">
                     </div>
                 </div>
                 <div class="input-group">
                     <label class="input-label">Пароль</label>
                     <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
+                        <i class="fas fa-lock input-icon"></i>
                         <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
                         <i class="fas fa-eye toggle-password" id="togglePasswordIcon"></i>
                     </div>
@@ -50,11 +50,11 @@
                     </label>
                     <a href="#" class="forgot-link">Забыли пароль?</a>
                 </div>
-                <button type="submit" class="btn-login">
+                <button type="submit" class="btn-login" id="loginBtn">
                     <i class="fas fa-arrow-right-to-bracket"></i> Войти
                 </button>
                 <div class="register-prompt">
-                    Нет аккаунта?<a href="#">Создать аккаунт</a>
+                    Нет аккаунта?<a href="register.html">Создать аккаунт</a>
                 </div>
             </form>
         </div>
@@ -65,120 +65,178 @@
     </footer>
 
     <script>
-    const togglePassword = document.getElementById('togglePasswordIcon');
-    const passwordInput = document.getElementById('loginPassword');
-    const loginForm = document.getElementById('loginForm');
-    const loginEmailInput = document.getElementById('loginEmail');
-    const rememberCheckbox = document.getElementById('rememberMe');
+        const togglePassword = document.getElementById('togglePasswordIcon');
+        const passwordInput = document.getElementById('loginPassword');
+        const loginForm = document.getElementById('loginForm');
+        const loginEmailInput = document.getElementById('loginEmail');
+        const rememberCheckbox = document.getElementById('rememberMe');
+        const loginBtn = document.getElementById('loginBtn');
 
-    togglePassword.addEventListener('click', function() {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-    });
+        togglePassword.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+            passwordInput.focus();
+        });
 
-    function loadSavedLogin() {
-        const savedLogin = localStorage.getItem('skilltrade_saved_login');
-        if (savedLogin) {
-            loginEmailInput.value = savedLogin;
-            rememberCheckbox.checked = true;
+        passwordInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        loginEmailInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                passwordInput.focus();
+            }
+        });
+
+        function loadSavedLogin() {
+            const savedLogin = localStorage.getItem('skilltrade_saved_login');
+            if (savedLogin) {
+                loginEmailInput.value = savedLogin;
+                rememberCheckbox.checked = true;
+            }
         }
-    }
-    loadSavedLogin();
+        loadSavedLogin();
 
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const loginValue = loginEmailInput.value.trim();
-        const passwordValue = passwordInput.value.trim();
-
-        if (!loginValue || !passwordValue) {
-            showToast('❌ Заполните оба поля', 'error');
-            return;
-        }
-
-        if (loginValue === 'demo@skilltrade.ru' && passwordValue === 'demo123') {
-            if (rememberCheckbox.checked) {
-                localStorage.setItem('skilltrade_saved_login', loginValue);
+        function saveLogin(login, remember) {
+            if (remember) {
+                localStorage.setItem('skilltrade_saved_login', login);
             } else {
                 localStorage.removeItem('skilltrade_saved_login');
             }
-            showToast('✅ Успешный вход! Перенаправление на главную...', 'success');
+        }
+
+        function showToast(message, type) {
+            const oldToast = document.querySelector('.custom-toast');
+            if (oldToast) oldToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = `custom-toast toast-${type}`;
+            toast.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i class="fas ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}" style="font-size:22px;"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+            document.body.appendChild(toast);
+
+            toast.style.position = 'fixed';
+            toast.style.bottom = '30px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.background = type === 'success' ? '#0F2A1F' : type === 'error' ? '#2A1A2A' : '#1A2A3A';
+            toast.style.border = type === 'success' ? '1px solid #10B981' : type === 'error' ? '1px solid #EF4444' : '1px solid #3B82F6';
+            toast.style.color = '#fff';
+            toast.style.padding = '14px 28px';
+            toast.style.borderRadius = '60px';
+            toast.style.fontWeight = '500';
+            toast.style.zIndex = '9999';
+            toast.style.backdropFilter = 'blur(12px)';
+            toast.style.fontFamily = "'Inter', sans-serif";
+            toast.style.fontSize = '14px';
+            toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+            toast.style.whiteSpace = 'nowrap';
+
             setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
         }
-        else if (loginValue === 'student@skilltrade.ru' && passwordValue === '123456') {
-            if (rememberCheckbox.checked) localStorage.setItem('skilltrade_saved_login', loginValue);
-            else localStorage.removeItem('skilltrade_saved_login');
-            showToast('✅ Добро пожаловать, студент! Скоро перейдём в кабинет.', 'success');
-            setTimeout(() => window.location.href = 'index.html', 1300);
-        }
-        else {
-            showToast('⚠️ Неверный логин или пароль. Используйте demo@skilltrade.ru / demo123', 'error');
-        }
-    });
 
-    function showToast(message, type) {
-        const oldToast = document.querySelector('.custom-toast');
-        if(oldToast) oldToast.remove();
+        async function login(login, password, remember) {
+            try {
+                const response = await fetch('/api/login/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        login: login,
+                        password: password
+                    })
+                });
 
-        const toast = document.createElement('div');
-        toast.className = `custom-toast toast-${type}`;
-        toast.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <i class="fas ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}" style="font-size:22px;"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        document.body.appendChild(toast);
-        toast.style.position = 'fixed';
-        toast.style.bottom = '30px';
-        toast.style.left = '50%';
-        toast.style.transform = 'translateX(-50%)';
-        toast.style.background = type === 'success' ? '#0F2A1F' : '#2A1A2A';
-        toast.style.border = type === 'success' ? '1px solid #10B981' : '1px solid #EF4444';
-        toast.style.color = '#fff';
-        toast.style.padding = '14px 28px';
-        toast.style.borderRadius = '60px';
-        toast.style.fontWeight = '500';
-        toast.style.zIndex = '9999';
-        toast.style.backdropFilter = 'blur(12px)';
-        toast.style.backgroundColor = type === 'success' ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
-        toast.style.fontFamily = "'Inter', sans-serif";
-        toast.style.fontSize = '14px';
-        toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
-        toast.style.whiteSpace = 'nowrap';
+                if (response.ok) {
+                    saveLogin(login, remember);
+                    showToast('✅ Успешный вход! Перенаправление на главную...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/api/content/main';
+                    }, 1500);
+                } else if (response.status === 400) {
+                    const errorText = await response.text();
+                    showToast(errorText || 'Неверный логин или пароль', 'error');
+                } else {
+                    showToast('Ошибка сервера. Попробуйте позже.', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('Ошибка соединения с сервером', 'error');
+            }
+        }
 
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 400);
-        }, 2800);
-    }
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-    document.querySelector('.forgot-link').addEventListener('click', (e) => {
-        e.preventDefault();
-        showToast('📧 Функция восстановления появится в ближайшее время!', 'info');
-    });
-    document.querySelector('.register-prompt a').addEventListener('click', (e) => {
-        e.preventDefault();
-        showToast('✨ Страница регистрации в разработке. Следите за обновлениями!', 'info');
-    });
-    const style = document.createElement('style');
-    style.textContent = `
-        .custom-toast.toast-info {
-            background: rgba(59,130,246,0.15);
-            border-color: #3B82F6;
+            const loginValue = loginEmailInput.value.trim();
+            const passwordValue = passwordInput.value.trim();
+            const remember = rememberCheckbox.checked;
+
+            if (!loginValue || !passwordValue) {
+                showToast('❌ Заполните оба поля', 'error');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+
+            await login(loginValue, passwordValue, remember);
+
+            setTimeout(() => {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Войти';
+            }, 3000);
+        });
+
+        document.querySelector('.forgot-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            showToast('📧 Функция восстановления появится в ближайшее время!', 'info');
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+                .custom-toast.toast-info {
+                    background: rgba(59,130,246,0.15);
+                    border-color: #3B82F6;
+                }
+                .custom-toast {
+                    transition: opacity 0.25s ease;
+                }
+                @media (max-width: 550px) {
+                    .custom-toast { white-space: normal; width: 90%; text-align: center; }
+                }
+            `;
+        document.head.appendChild(style);
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/user/me', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    window.location.href = '/api/content/main';
+                }
+            } catch (error) {
+            }
         }
-        .custom-toast {
-            transition: opacity 0.25s ease;
-        }
-        @media (max-width: 550px) {
-            .custom-toast { white-space: normal; width: 90%; text-align: center; }
-        }
-    `;
-    document.head.appendChild(style);
+        checkAuth();
     </script>
 </body>
 </html>

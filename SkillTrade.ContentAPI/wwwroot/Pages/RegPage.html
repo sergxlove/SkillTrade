@@ -6,7 +6,7 @@
     <title>SkillTrade - Регистрация аккаунта</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../Styles/RegPage.css"/>
+    <link rel="stylesheet" href="/Styles/RegPage.css" />
 </head>
 <body>
     <div class="container">
@@ -16,7 +16,7 @@
                 <span>SkillTrade</span>
             </a>
             <div class="nav-links">
-                <a href="/api/content/reg" class="btn-outline-light">Войти</a>
+                <a href="login.html" class="btn-outline-light">Войти</a>
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
                 <div class="input-group">
                     <label class="input-label">Логин <span>*</span></label>
                     <div class="input-wrapper">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-user input-icon"></i>
                         <input type="text" id="regLogin" placeholder="например: ivan123" autocomplete="username">
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                 <div class="input-group">
                     <label class="input-label">Имя <span>*</span></label>
                     <div class="input-wrapper">
-                        <i class="fas fa-user-circle"></i>
+                        <i class="fas fa-user-circle input-icon"></i>
                         <input type="text" id="regName" placeholder="Иван Иванов" autocomplete="name">
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="input-group">
                     <label class="input-label">Роль <span>*</span></label>
                     <div class="input-wrapper">
-                        <i class="fas fa-user-tag"></i>
+                        <i class="fas fa-user-tag input-icon"></i>
                         <select id="regRole">
                             <option value="student">Студент - хочу учиться</option>
                             <option value="actor">Автор - хочу создавать курсы</option>
@@ -59,19 +59,16 @@
                 <div class="input-group">
                     <label class="input-label">Пароль <span>*</span></label>
                     <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="regPassword" placeholder="Минимум 6 символов" autocomplete="new-password">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="regPassword" placeholder="Введите пароль" autocomplete="new-password">
                         <i class="fas fa-eye toggle-password" id="togglePasswordIcon"></i>
-                    </div>
-                    <div class="password-hint">
-                        <i class="fas fa-info-circle"></i> Пароль должен содержать заглавную букву и цифру
                     </div>
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">Подтверждение пароля <span>*</span></label>
                     <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
+                        <i class="fas fa-lock input-icon"></i>
                         <input type="password" id="regConfirmPassword" placeholder="Повторите пароль" autocomplete="off">
                         <i class="fas fa-eye toggle-password" id="toggleConfirmIcon"></i>
                     </div>
@@ -84,12 +81,12 @@
                     </label>
                 </div>
 
-                <button type="submit" class="btn-register">
+                <button type="submit" class="btn-register" id="registerBtn">
                     <i class="fas fa-user-plus"></i> Зарегистрироваться
                 </button>
 
                 <div class="login-prompt">
-                    Уже есть аккаунт?<a href="/api/content/login">Войти</a>
+                    Уже есть аккаунт?<a href="login.html">Войти</a>
                 </div>
             </form>
         </div>
@@ -100,163 +97,195 @@
     </footer>
 
     <script>
-    const togglePassword = document.getElementById('togglePasswordIcon');
-    const toggleConfirm = document.getElementById('toggleConfirmIcon');
-    const passwordInput = document.getElementById('regPassword');
-    const confirmInput = document.getElementById('regConfirmPassword');
-    const registerForm = document.getElementById('registerForm');
-    const regLogin = document.getElementById('regLogin');
-    const regName = document.getElementById('regName');
-    const regRole = document.getElementById('regRole');
-    const agreeTerms = document.getElementById('agreeTerms');
+        const togglePassword = document.getElementById('togglePasswordIcon');
+        const toggleConfirm = document.getElementById('toggleConfirmIcon');
+        const passwordInput = document.getElementById('regPassword');
+        const confirmInput = document.getElementById('regConfirmPassword');
+        const registerForm = document.getElementById('registerForm');
+        const registerBtn = document.getElementById('registerBtn');
+        const regLogin = document.getElementById('regLogin');
+        const regName = document.getElementById('regName');
+        const regRole = document.getElementById('regRole');
+        const agreeTerms = document.getElementById('agreeTerms');
 
-    togglePassword.addEventListener('click', function() {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-    });
+        togglePassword.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+            passwordInput.focus();
+        });
 
-    toggleConfirm.addEventListener('click', function() {
-        const type = confirmInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        confirmInput.setAttribute('type', type);
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-    });
+        toggleConfirm.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const type = confirmInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+            confirmInput.focus();
+        });
 
-    function isValidPassword(password) {
-        if (password.length < 6) return false;
-        let hasUpperCase = /[A-Z]/.test(password);
-        let hasDigit = /\d/.test(password);
-        return hasUpperCase && hasDigit;
-    }
+        function showToast(message, type) {
+            const oldToast = document.querySelector('.custom-toast');
+            if (oldToast) oldToast.remove();
 
-    function showToast(message, type) {
-        const oldToast = document.querySelector('.custom-toast');
-        if(oldToast) oldToast.remove();
+            const toast = document.createElement('div');
+            toast.className = `custom-toast toast-${type}`;
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fas ${type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-circle-exclamation' : 'fa-info-circle')}" style="font-size:22px;"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(toast);
 
-        const toast = document.createElement('div');
-        toast.className = `custom-toast toast-${type}`;
-        toast.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <i class="fas ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}" style="font-size:22px;"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        document.body.appendChild(toast);
+            toast.style.position = 'fixed';
+            toast.style.bottom = '30px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.background = type === 'success' ? '#0F2A1F' : type === 'error' ? '#2A1A2A' : '#1A2A3A';
+            toast.style.border = type === 'success' ? '1px solid #10B981' : type === 'error' ? '1px solid #EF4444' : '1px solid #3B82F6';
+            toast.style.color = '#fff';
+            toast.style.padding = '14px 28px';
+            toast.style.borderRadius = '60px';
+            toast.style.fontWeight = '500';
+            toast.style.zIndex = '9999';
+            toast.style.backdropFilter = 'blur(12px)';
+            toast.style.fontFamily = "'Inter', sans-serif";
+            toast.style.fontSize = '14px';
+            toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+            toast.style.whiteSpace = 'nowrap';
 
-        toast.style.position = 'fixed';
-        toast.style.bottom = '30px';
-        toast.style.left = '50%';
-        toast.style.transform = 'translateX(-50%)';
-        toast.style.background = type === 'success' ? '#0F2A1F' : '#2A1A2A';
-        toast.style.border = type === 'success' ? '1px solid #10B981' : '1px solid #EF4444';
-        toast.style.color = '#fff';
-        toast.style.padding = '14px 28px';
-        toast.style.borderRadius = '60px';
-        toast.style.fontWeight = '500';
-        toast.style.zIndex = '9999';
-        toast.style.backdropFilter = 'blur(12px)';
-        toast.style.backgroundColor = type === 'success' ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
-        toast.style.fontFamily = "'Inter', sans-serif";
-        toast.style.fontSize = '14px';
-        toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
-        toast.style.whiteSpace = 'nowrap';
-
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 400);
-        }, 3000);
-    }
-
-    registerForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const login = regLogin.value.trim();
-        const name = regName.value.trim();
-        const role = regRole.value;
-        const password = passwordInput.value;
-        const confirmPassword = confirmInput.value;
-        const termsAccepted = agreeTerms.checked;
-
-        if (!login || !name || !password || !confirmPassword) {
-            showToast('❌ Заполните все обязательные поля', 'error');
-            return;
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
         }
 
-        if (login.length < 3) {
-            showToast('❌ Логин должен содержать минимум 3 символа', 'error');
-            return;
+        async function register(login, name, password, role) {
+            try {
+                const response = await fetch('/api/login/reg', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        login: login,
+                        name: name,
+                        password: password,
+                        role: role
+                    })
+                });
+
+                if (response.ok) {
+                    showToast('✅ Регистрация успешна! Перенаправление...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/api/content/main';
+                    }, 2000);
+                } else if (response.status === 400) {
+                    const errorText = await response.text();
+                    showToast(errorText || 'Ошибка регистрации', 'error');
+                } else {
+                    showToast('Ошибка сервера. Попробуйте позже.', 'error');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showToast('Ошибка соединения с сервером', 'error');
+            }
         }
 
-        if (name.length < 2) {
-            showToast('❌ Имя должно содержать минимум 2 символа', 'error');
-            return;
-        }
+        registerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-        if (!isValidPassword(password)) {
-            showToast('❌ Пароль должен содержать минимум 6 символов, заглавную букву и цифру', 'error');
-            return;
-        }
+            const login = regLogin.value.trim();
+            const name = regName.value.trim();
+            const role = regRole.value;
+            const password = passwordInput.value;
+            const confirmPassword = confirmInput.value;
+            const termsAccepted = agreeTerms.checked;
 
-        if (password !== confirmPassword) {
-            showToast('❌ Пароли не совпадают', 'error');
-            return;
-        }
+            if (!login || !name || !password || !confirmPassword) {
+                showToast('❌ Заполните все обязательные поля', 'error');
+                return;
+            }
 
-        if (!termsAccepted) {
-            showToast('❌ Необходимо согласиться с условиями', 'error');
-            return;
-        }
+            if (login.length < 3) {
+                showToast('❌ Логин должен содержать минимум 3 символа', 'error');
+                return;
+            }
 
-        if (login === 'demo' || login === 'admin' || login === 'student') {
-            showToast('❌ Этот логин уже занят', 'error');
-            return;
-        }
+            if (name.length < 2) {
+                showToast('❌ Имя должно содержать минимум 2 символа', 'error');
+                return;
+            }
 
-        showToast('✅ Регистрация успешна! Перенаправление на страницу входа...', 'success');
+            if (password !== confirmPassword) {
+                showToast('❌ Пароли не совпадают', 'error');
+                return;
+            }
 
-        localStorage.setItem('skilltrade_demo_user', JSON.stringify({
-            login: login,
-            name: name,
-            role: role,
-            registeredAt: new Date().toISOString()
-        }));
+            if (!termsAccepted) {
+                showToast('❌ Необходимо согласиться с условиями', 'error');
+                return;
+            }
 
-        setTimeout(() => {
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+
+            await register(login, name, password, role);
+
+            setTimeout(() => {
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Зарегистрироваться';
+            }, 3000);
+        });
+
+        document.querySelector('.login-prompt a').addEventListener('click', (e) => {
+            e.preventDefault();
             window.location.href = 'login.html';
-        }, 2000);
-    });
+        });
 
-    document.querySelector('.login-prompt a').addEventListener('click', (e) => {
-        e.preventDefault();
-        window.location.href = 'login.html';
-    });
+        document.querySelector('.logo').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'index.html';
+        });
 
-    document.querySelector('.logo').addEventListener('click', (e) => {
-        e.preventDefault();
-        window.location.href = 'index.html';
-    });
+        document.querySelector('.btn-outline-light').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'login.html';
+        });
 
-    document.querySelector('.btn-outline-light').addEventListener('click', (e) => {
-        e.preventDefault();
-        window.location.href = '/api/content/login';
-    });
+        const style = document.createElement('style');
+        style.textContent = `
+            .custom-toast.toast-info {
+                background: rgba(59,130,246,0.15);
+                border-color: #3B82F6;
+            }
+            .custom-toast {
+                transition: opacity 0.25s ease;
+            }
+            @media (max-width: 550px) {
+                .custom-toast { white-space: normal; width: 90%; text-align: center; }
+            }
+        `;
+        document.head.appendChild(style);
 
-    const style = document.createElement('style');
-    style.textContent = `
-        .custom-toast.toast-info {
-            background: rgba(59,130,246,0.15);
-            border-color: #3B82F6;
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/user/me', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+            }
         }
-        .custom-toast {
-            transition: opacity 0.25s ease;
-        }
-        @media (max-width: 550px) {
-            .custom-toast { white-space: normal; width: 90%; text-align: center; }
-        }
-    `;
-    document.head.appendChild(style);
+        checkAuth();
     </script>
 </body>
 </html>

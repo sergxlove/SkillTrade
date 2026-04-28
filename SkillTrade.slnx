@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/SolutionFolder/">
+    <File Path="docker-compose.yml" />
+  </Folder>
   <Project Path="SkillTrade.ContentAPI/SkillTrade.ContentAPI.csproj" />
   <Project Path="SkillTrade.Core/SkillTrade.Core.csproj" Id="2271907a-949b-4fcb-b7d5-84920d66a791" />
   <Project Path="SkillTrade.CoursesAPI/SkillTrade.CoursesAPI.csproj" />

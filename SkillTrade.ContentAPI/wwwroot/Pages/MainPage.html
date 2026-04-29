@@ -6,7 +6,7 @@
     <title>SkillTrade - Главная | Обучение</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/Styles/MainPage.css"/>
+    <link rel="stylesheet" href="/Styles/MainPage.css" />
 </head>
 <body>
     <div class="container">
@@ -22,7 +22,7 @@
             </div>
             <div class="user-menu" onclick="logout()">
                 <i class="fas fa-user"></i>
-                <span>Алексей</span>
+                <span id="userLoginSpan">Загрузка...</span>
                 <i class="fas fa-sign-out-alt"></i>
                 <span class="logout-btn">Выход</span>
             </div>
@@ -153,6 +153,48 @@
         let currentLevelFilter = "all";
         let currentSearchTerm = "";
 
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                console.error('Error parsing JWT:', error);
+                return null;
+            }
+        }
+
+        function getLoginFromJWT() {
+            try {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'jwt') {
+                        const decoded = parseJwt(value);
+                        if (decoded) {
+                            return decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || 'Неизвестно';
+                        }
+                        break;
+                    }
+                }
+                return 'Неизвестно';
+            } catch (error) {
+                console.error('Error getting login from JWT:', error);
+                return 'Неизвестно';
+            }
+        }
+
+        function updateUserLoginDisplay() {
+            const userLoginSpan = document.getElementById('userLoginSpan');
+            if (userLoginSpan) {
+                const login = getLoginFromJWT();
+                userLoginSpan.innerText = login;
+            }
+        }
+
         async function logout() {
             if (confirm('Вы уверены, что хотите выйти?')) {
                 try {
@@ -216,27 +258,27 @@
             }
 
             container.innerHTML = myCoursesWithData.map(course => `
-                <div class="my-course-card">
-                    <div class="card-img" style="background-image: linear-gradient(0deg, #0B0F1C, transparent), url('${course.image}'); background-size: cover; height: 140px;">
-                        <span class="level-badge">${getLevelText(course.level)}</span>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-title">${escapeHtml(course.title)}</div>
-                        <div class="progress-section" style="padding: 0; margin-top: 12px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                                <span>Прогресс</span>
-                                <span><strong>${course.progress}%</strong></span>
+                    <div class="my-course-card">
+                        <div class="card-img" style="background-image: linear-gradient(0deg, #0B0F1C, transparent), url('${course.image}'); background-size: cover; height: 140px;">
+                            <span class="level-badge">${getLevelText(course.level)}</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">${escapeHtml(course.title)}</div>
+                            <div class="progress-section" style="padding: 0; margin-top: 12px;">
+                                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                                    <span>Прогресс</span>
+                                    <span><strong>${course.progress}%</strong></span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: ${course.progress}%;"></div>
+                                </div>
+                                <button class="continue-btn" onclick="continueLearning(${course.courseId})">
+                                    <i class="fas fa-play"></i> Продолжить урок ${course.currentLesson || 1}/${course.totalLessons}
+                                </button>
                             </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" style="width: ${course.progress}%;"></div>
-                            </div>
-                            <button class="continue-btn" onclick="continueLearning(${course.courseId})">
-                                <i class="fas fa-play"></i> Продолжить урок ${course.currentLesson || 1}/${course.totalLessons}
-                            </button>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
         }
 
         function renderCourses() {
@@ -254,27 +296,27 @@
             container.innerHTML = filtered.map(course => {
                 const subscribed = isSubscribed(course.id);
                 return `
-                    <div class="course-card" data-id="${course.id}">
-                        <div class="card-img" style="background-image: linear-gradient(0deg, #0B0F1C, transparent), url('${course.image}'); background-size: cover;">
-                            <span class="level-badge"><i class="fas fa-signal"></i> ${getLevelText(course.level)}</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-title">${escapeHtml(course.title)}</div>
-                            <div class="card-description">${escapeHtml(course.description.substring(0, 85))}${course.description.length > 85 ? '…' : ''}</div>
-                            <div class="card-meta">
-                                <span><i class="far fa-clock"></i> ${course.duration} ч</span>
-                                <span><i class="fas fa-book-open"></i> ${course.lessonsCount} уроков</span>
-                                <span><i class="fas fa-user-graduate"></i> ${course.author}</span>
+                        <div class="course-card" data-id="${course.id}">
+                            <div class="card-img" style="background-image: linear-gradient(0deg, #0B0F1C, transparent), url('${course.image}'); background-size: cover;">
+                                <span class="level-badge"><i class="fas fa-signal"></i> ${getLevelText(course.level)}</span>
                             </div>
-                            <div class="card-footer">
-                                <span class="card-price">${course.price.toLocaleString()} ₽</span>
-                                <button class="btn-enroll ${subscribed ? 'btn-subscribed' : ''}" data-id="${course.id}">
-                                    ${subscribed ? '<i class="fas fa-check"></i> Записан' : '<i class="fas fa-plus"></i> Записаться'}
-                                </button>
+                            <div class="card-content">
+                                <div class="card-title">${escapeHtml(course.title)}</div>
+                                <div class="card-description">${escapeHtml(course.description.substring(0, 85))}${course.description.length > 85 ? '…' : ''}</div>
+                                <div class="card-meta">
+                                    <span><i class="far fa-clock"></i> ${course.duration} ч</span>
+                                    <span><i class="fas fa-book-open"></i> ${course.lessonsCount} уроков</span>
+                                    <span><i class="fas fa-user-graduate"></i> ${course.author}</span>
+                                </div>
+                                <div class="card-footer">
+                                    <span class="card-price">${course.price.toLocaleString()} ₽</span>
+                                    <button class="btn-enroll ${subscribed ? 'btn-subscribed' : ''}" data-id="${course.id}">
+                                        ${subscribed ? '<i class="fas fa-check"></i> Записан' : '<i class="fas fa-plus"></i> Записаться'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
             }).join('');
 
             document.querySelectorAll('.btn-enroll').forEach(btn => {
@@ -303,25 +345,25 @@
 
             document.getElementById('modalTitle').innerText = course.title;
             document.getElementById('modalBody').innerHTML = `
-                <div class="modal-detail"><strong><i class="fas fa-chart-line"></i> Уровень:</strong> ${getLevelText(course.level)}</div>
-                <div class="modal-detail"><strong><i class="fas fa-align-left"></i> Описание:</strong> ${escapeHtml(course.description)}</div>
-                <div class="modal-detail"><strong><i class="fas fa-hourglass-half"></i> Длительность:</strong> ${course.duration} часов (${course.lessonsCount} уроков)</div>
-                <div class="modal-detail"><strong><i class="fas fa-chalkboard-user"></i> Автор:</strong> ${course.author}</div>
-                ${subscribed ? `
-                    <div class="modal-detail"><strong><i class="fas fa-chart-simple"></i> Ваш прогресс:</strong> ${progress}% завершено</div>
-                    <div class="progress-bar-container" style="margin-top: 8px;"><div class="progress-bar" style="width: ${progress}%;"></div></div>
-                ` : ''}
-                <div class="enroll-section">
-                    <div><span class="price-modal">${course.price.toLocaleString()} ₽</span> <span style="font-size:14px;">единоразово</span></div>
-                    ${subscribed ?
+                    <div class="modal-detail"><strong><i class="fas fa-chart-line"></i> Уровень:</strong> ${getLevelText(course.level)}</div>
+                    <div class="modal-detail"><strong><i class="fas fa-align-left"></i> Описание:</strong> ${escapeHtml(course.description)}</div>
+                    <div class="modal-detail"><strong><i class="fas fa-hourglass-half"></i> Длительность:</strong> ${course.duration} часов (${course.lessonsCount} уроков)</div>
+                    <div class="modal-detail"><strong><i class="fas fa-chalkboard-user"></i> Автор:</strong> ${course.author}</div>
+                    ${subscribed ? `
+                        <div class="modal-detail"><strong><i class="fas fa-chart-simple"></i> Ваш прогресс:</strong> ${progress}% завершено</div>
+                        <div class="progress-bar-container" style="margin-top: 8px;"><div class="progress-bar" style="width: ${progress}%;"></div></div>
+                    ` : ''}
+                    <div class="enroll-section">
+                        <div><span class="price-modal">${course.price.toLocaleString()} ₽</span> <span style="font-size:14px;">единоразово</span></div>
+                        ${subscribed ?
                     `<button class="btn-primary" style="width:auto; padding:12px 28px;" onclick="continueLearning(${course.id})"><i class="fas fa-play"></i> Продолжить обучение</button>` :
                     `<button class="btn-primary" style="width:auto; padding:12px 28px;" onclick="subscribeToCourse(${course.id})"><i class="fas fa-shopping-cart"></i> Записаться на курс</button>`
                 }
-                </div>
-                <div style="margin-top:16px; font-size:12px; background:#0F1424; border-radius:20px; padding:12px; text-align:center;">
-                    <i class="fas fa-certificate"></i> Сертификат по окончании • Доступ навсегда
-                </div>
-            `;
+                    </div>
+                    <div style="margin-top:16px; font-size:12px; background:#0F1424; border-radius:20px; padding:12px; text-align:center;">
+                        <i class="fas fa-certificate"></i> Сертификат по окончании • Доступ навсегда
+                    </div>
+                `;
             document.getElementById('courseModal').classList.add('active');
         }
 
@@ -426,6 +468,8 @@
         document.getElementById('courseModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('courseModal')) closeModal();
         });
+
+        updateUserLoginDisplay();
 
         renderMyCourses();
         renderCourses();

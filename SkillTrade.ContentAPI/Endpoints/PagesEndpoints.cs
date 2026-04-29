@@ -94,6 +94,27 @@
                 catch { }
             });
 
+            app.MapGet("/error/{statusCode:int}", async (int statusCode, HttpContext context) =>
+            {
+                try
+                {
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    switch (statusCode)
+                    {
+                        case 401:
+                            await context.Response.SendFileAsync("wwwroot/Pages/Errors/Error401Page.html");
+                            break;
+                        case 403:
+                            await context.Response.SendFileAsync("wwwroot/Pages/Errors/Error403Page.html");
+                            break;
+                        case 404:
+                            await context.Response.SendFileAsync("wwwroot/Pages/Errors/Error404Page.html");
+                            break;
+                    }
+                }
+                catch { }
+            });
+
             return app;
         }
     }

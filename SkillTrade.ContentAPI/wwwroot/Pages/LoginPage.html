@@ -16,7 +16,7 @@
                 <span>SkillTrade</span>
             </a>
             <div class="nav-links">
-                <a href="register.html" class="btn-outline-light">Регистрация</a>
+                <a href="/api/content/reg" class="btn-outline-light">Регистрация</a>
             </div>
         </div>
     </div>
@@ -223,20 +223,6 @@
                 }
             `;
         document.head.appendChild(style);
-
-        async function checkAuth() {
-            try {
-                const response = await fetch('/api/user/me', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                if (response.ok) {
-                    window.location.href = '/api/content/main';
-                }
-            } catch (error) {
-            }
-        }
-        checkAuth();
     </script>
 </body>
 </html>

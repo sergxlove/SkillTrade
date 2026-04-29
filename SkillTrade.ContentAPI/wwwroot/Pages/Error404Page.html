@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SkillTrade - Ошибка</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../Styles/ErrorStyles.css" />
+</head>
+<body>
+    <div class="error-container">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+        <div class="particles" id="particlesContainer"></div>
+        <div class="brand-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fas fa-chalkboard-user"></i>
+                </div>
+                <div class="brand-title">SkillTrade</div>
+            </div>
+            <div class="error-badge" id="liveErrorBadge">Ошибка 404</div>
+        </div>
+        <div class="error-main">
+            <div class="error-code-wrapper">
+                <div class="error-glitch" id="errorNumberDisplay">404</div>
+                <div class="error-subtitle" id="errorDescription">Страница не найдена</div>
+                <div class="error-description" id="errorMessage">
+                    Запрашиваемая страница не существует или была перемещена.<br>
+                    Проверьте правильность URL или вернитесь на главную.
+                </div>
+                <div class="action-buttons">
+                    <a href="/api/content/index.html" class="btn-primary">
+                        <i class="fas fa-home"></i> На главную
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-note">
+            <span class="status-msg" id="statusMsg">✨ SkillTrade | Ошибка 404</span>
+        </div>
+    </div>
+    <script>
+        (function() {
+            setInterval(() => {
+                const badge = document.getElementById('liveErrorBadge');
+                if (badge) {
+                    badge.style.transition = '0.2s';
+                    badge.style.opacity = '0.85';
+                    setTimeout(() => { if(badge) badge.style.opacity = '1'; }, 200);
+                }
+            }, 4000);
+            function createParticles() {
+                const container = document.getElementById('particlesContainer');
+                if (!container) return;
+                const particleCount = 50;
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+
+                    const size = Math.random() * 6 + 2;
+                    const left = Math.random() * 100;
+                    const duration = Math.random() * 10 + 5;
+                    const delay = Math.random() * 15;
+
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.left = left + '%';
+                    particle.style.animationDuration = duration + 's';
+                    particle.style.animationDelay = delay + 's';
+                    container.appendChild(particle);
+                }
+            }
+            createParticles();
+        })();
+    </script>
+</body>
+</html>

@@ -6,7 +6,7 @@
     <title>SkillTrade - Панель автора</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/Styles/ActorPage.css"/>
+    <link rel="stylesheet" href="/Styles/ActorPage.css" />
 </head>
 <body>
     <div class="container">
@@ -268,11 +268,20 @@
         let currentEditLessonId = null;
         let currentEditCourseIdForLesson = null;
 
-        function logout() {
+        async function logout() {
             if (confirm('Вы уверены, что хотите выйти?')) {
-                localStorage.removeItem('skilltrade_token');
-                sessionStorage.clear();
-                window.location.href = 'login.html';
+                try {
+                    const response = await fetch('/api/login/logout', {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    localStorage.removeItem('skilltrade_token');
+                    sessionStorage.clear();
+                    window.location.href = '/api/content/login';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    window.location.href = '/api/content/login';
+                }
             }
         }
 
@@ -281,25 +290,25 @@
             if (!toolbar) return;
 
             toolbar.innerHTML = `
-                <div class="editor-toolbar-group">
-                    <button onclick="execCommand('bold', '${editorId}')"><b>B</b></button>
-                    <button onclick="execCommand('italic', '${editorId}')"><i>I</i></button>
-                    <button onclick="execCommand('underline', '${editorId}')"><u>U</u></button>
-                </div>
-                <div class="editor-toolbar-group">
-                    <button onclick="execCommand('formatBlock', '${editorId}', 'h3')">H3</button>
-                    <button onclick="execCommand('formatBlock', '${editorId}', 'h4')">H4</button>
-                    <button onclick="execCommand('formatBlock', '${editorId}', 'p')">P</button>
-                </div>
-                <div class="editor-toolbar-group">
-                    <button onclick="execCommand('insertUnorderedList', '${editorId}')"><i class="fas fa-list-ul"></i></button>
-                    <button onclick="execCommand('insertOrderedList', '${editorId}')"><i class="fas fa-list-ol"></i></button>
-                </div>
-                <div class="editor-toolbar-group">
-                    <button onclick="insertLink('${editorId}')"><i class="fas fa-link"></i></button>
-                    <button onclick="insertImage('${editorId}')"><i class="fas fa-image"></i></button>
-                </div>
-            `;
+                    <div class="editor-toolbar-group">
+                        <button onclick="execCommand('bold', '${editorId}')"><b>B</b></button>
+                        <button onclick="execCommand('italic', '${editorId}')"><i>I</i></button>
+                        <button onclick="execCommand('underline', '${editorId}')"><u>U</u></button>
+                    </div>
+                    <div class="editor-toolbar-group">
+                        <button onclick="execCommand('formatBlock', '${editorId}', 'h3')">H3</button>
+                        <button onclick="execCommand('formatBlock', '${editorId}', 'h4')">H4</button>
+                        <button onclick="execCommand('formatBlock', '${editorId}', 'p')">P</button>
+                    </div>
+                    <div class="editor-toolbar-group">
+                        <button onclick="execCommand('insertUnorderedList', '${editorId}')"><i class="fas fa-list-ul"></i></button>
+                        <button onclick="execCommand('insertOrderedList', '${editorId}')"><i class="fas fa-list-ol"></i></button>
+                    </div>
+                    <div class="editor-toolbar-group">
+                        <button onclick="insertLink('${editorId}')"><i class="fas fa-link"></i></button>
+                        <button onclick="insertImage('${editorId}')"><i class="fas fa-image"></i></button>
+                    </div>
+                `;
         }
 
         function execCommand(command, editorId, value = null) {
@@ -344,34 +353,34 @@
                 const levelText = course.level === 'beginner' ? 'Начинающий' : (course.level === 'middle' ? 'Средний' : 'Продвинутый');
 
                 html += `
-                    <div class="course-card">
-                        <div class="course-header">
-                            <div class="course-title">${escapeHtml(course.title)}</div>
-                            <span class="course-status ${statusClass}">${statusText}</span>
-                        </div>
-                        <div class="course-body">
-                            <div class="course-meta">
-                                <span><i class="far fa-calendar"></i> ${course.createdAt}</span>
-                                <span>${levelText}</span>
+                        <div class="course-card">
+                            <div class="course-header">
+                                <div class="course-title">${escapeHtml(course.title)}</div>
+                                <span class="course-status ${statusClass}">${statusText}</span>
                             </div>
-                            <div class="course-stats">
-                                <span><i class="fas fa-users"></i> ${course.students} студ.</span>
-                                <span><i class="fas fa-star"></i> ${course.rating}</span>
-                                <span><i class="fas fa-book"></i> ${course.lessonsCount} уроков</span>
+                            <div class="course-body">
+                                <div class="course-meta">
+                                    <span><i class="far fa-calendar"></i> ${course.createdAt}</span>
+                                    <span>${levelText}</span>
+                                </div>
+                                <div class="course-stats">
+                                    <span><i class="fas fa-users"></i> ${course.students} студ.</span>
+                                    <span><i class="fas fa-star"></i> ${course.rating}</span>
+                                    <span><i class="fas fa-book"></i> ${course.lessonsCount} уроков</span>
+                                </div>
+                                <div class="course-price">${course.price.toLocaleString()} ₽</div>
                             </div>
-                            <div class="course-price">${course.price.toLocaleString()} ₽</div>
+                            <div class="course-actions">
+                                <button class="btn-icon" onclick="openEditCourseModal(${course.id})"><i class="fas fa-edit"></i> Редактировать</button>
+                                <button class="btn-icon" onclick="manageLessons(${course.id})"><i class="fas fa-list"></i> Уроки</button>
+                                <button class="btn-icon" onclick="togglePublish(${course.id})">
+                                    <i class="fas ${course.status === 'published' ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                    ${course.status === 'published' ? 'Снять' : 'Опубликовать'}
+                                </button>
+                                <button class="btn-icon btn-danger" onclick="deleteCourse(${course.id})"><i class="fas fa-trash"></i></button>
+                            </div>
                         </div>
-                        <div class="course-actions">
-                            <button class="btn-icon" onclick="openEditCourseModal(${course.id})"><i class="fas fa-edit"></i> Редактировать</button>
-                            <button class="btn-icon" onclick="manageLessons(${course.id})"><i class="fas fa-list"></i> Уроки</button>
-                            <button class="btn-icon" onclick="togglePublish(${course.id})">
-                                <i class="fas ${course.status === 'published' ? 'fa-eye-slash' : 'fa-eye'}"></i>
-                                ${course.status === 'published' ? 'Снять' : 'Опубликовать'}
-                            </button>
-                            <button class="btn-icon btn-danger" onclick="deleteCourse(${course.id})"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
+                    `;
             }
             grid.innerHTML = html;
             updateStats();
@@ -476,22 +485,22 @@
                 const shortContent = plainText.length > 100 ? plainText.substring(0, 100) + '...' : plainText;
 
                 html += `
-                    <div class="lesson-item">
-                        <div class="lesson-header">
-                            <div class="lesson-title">${escapeHtml(lesson.title)}</div>
-                            <div class="lesson-actions">
-                                <button class="btn-icon" onclick="openEditLessonModal(${courseId}, ${lesson.id})">
-                                    <i class="fas fa-edit"></i> Редактировать
-                                </button>
-                                <button class="btn-icon btn-danger" onclick="deleteLesson(${courseId}, ${lesson.id})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                        <div class="lesson-item">
+                            <div class="lesson-header">
+                                <div class="lesson-title">${escapeHtml(lesson.title)}</div>
+                                <div class="lesson-actions">
+                                    <button class="btn-icon" onclick="openEditLessonModal(${courseId}, ${lesson.id})">
+                                        <i class="fas fa-edit"></i> Редактировать
+                                    </button>
+                                    <button class="btn-icon btn-danger" onclick="deleteLesson(${courseId}, ${lesson.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
+                            <div class="lesson-preview">${escapeHtml(shortContent)}</div>
+                            <small><i class="far fa-clock"></i> ${lesson.createdAt}</small>
                         </div>
-                        <div class="lesson-preview">${escapeHtml(shortContent)}</div>
-                        <small><i class="far fa-clock"></i> ${lesson.createdAt}</small>
-                    </div>
-                `;
+                    `;
             }
             html += '</div>';
             container.innerHTML = html;

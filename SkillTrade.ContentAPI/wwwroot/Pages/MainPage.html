@@ -153,11 +153,20 @@
         let currentLevelFilter = "all";
         let currentSearchTerm = "";
 
-        function logout() {
+        async function logout() {
             if (confirm('Вы уверены, что хотите выйти?')) {
-                localStorage.removeItem('skilltrade_token');
-                sessionStorage.clear();
-                window.location.href = 'login.html';
+                try {
+                    const response = await fetch('/api/login/logout', {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    localStorage.removeItem('skilltrade_token');
+                    sessionStorage.clear();
+                    window.location.href = '/api/content/login';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    window.location.href = '/api/content/login';
+                }
             }
         }
 

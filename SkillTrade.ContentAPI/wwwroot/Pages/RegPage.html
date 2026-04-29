@@ -16,7 +16,7 @@
                 <span>SkillTrade</span>
             </a>
             <div class="nav-links">
-                <a href="login.html" class="btn-outline-light">Войти</a>
+                <a href="/api/content/login" class="btn-outline-light">Войти</a>
             </div>
         </div>
     </div>
@@ -245,7 +245,7 @@
 
         document.querySelector('.login-prompt a').addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = 'login.html';
+            window.location.href = '/api/content/login';
         });
 
         document.querySelector('.logo').addEventListener('click', (e) => {
@@ -255,7 +255,7 @@
 
         document.querySelector('.btn-outline-light').addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = 'login.html';
+            window.location.href = '/api/content/login';
         });
 
         const style = document.createElement('style');
@@ -272,20 +272,6 @@
             }
         `;
         document.head.appendChild(style);
-
-        async function checkAuth() {
-            try {
-                const response = await fetch('/api/user/me', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                if (response.ok) {
-                    window.location.href = 'index.html';
-                }
-            } catch (error) {
-            }
-        }
-        checkAuth();
     </script>
 </body>
 </html>

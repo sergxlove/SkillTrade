@@ -108,6 +108,15 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 .SetProperty(a => a.CurrentProgress, newProgress), token);
         }
 
+        public async Task<int> GetProgressAsync(Guid courseId, CancellationToken token)
+        {
+            UserCoursesEntity? result = await _context.UserCoursesTable
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.CourseId == courseId, token);
+            if (result is null) return 0;
+            return result.CurrentProgress;
+        }
+
         public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
             return await _context.UserCoursesTable

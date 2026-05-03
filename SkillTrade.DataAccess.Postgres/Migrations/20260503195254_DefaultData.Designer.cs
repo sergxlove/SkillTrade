@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SkillTrade.DataAccess.Postgres;
@@ -11,9 +12,11 @@ using SkillTrade.DataAccess.Postgres;
 namespace SkillTrade.DataAccess.Postgres.Migrations
 {
     [DbContext(typeof(SkillTradeDbContext))]
-    partial class SkillTradeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260503195254_DefaultData")]
+    partial class DefaultData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

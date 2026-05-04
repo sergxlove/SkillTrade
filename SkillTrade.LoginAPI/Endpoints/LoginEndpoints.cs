@@ -26,11 +26,13 @@ namespace SkillTrade.LoginAPI.Endpoints
                     if (!await userService.VerifyAsync(request.Login, request.Password, token))
                         return Results.BadRequest("Неверный логин или пароль");
                     string userRole = await userService.GetRoleAsync(request.Login, token);
+                    Guid userId = await userService.GetIdAsync(request.Login, token);
                     IConfigurationSection? jwtSettings = configuration.GetSection("JwtSettings");
                     var claims = new List<Claim>()
                     {
                         new Claim(ClaimTypes.Role, userRole),
                         new Claim(ClaimTypes.Email, request.Login),
+                        new Claim(ClaimTypes.NameIdentifier, userId.ToString())
                     };
                     var jwttoken = jwtService.GenerateToken(new JwtRequest()
                     {
@@ -72,6 +74,7 @@ namespace SkillTrade.LoginAPI.Endpoints
                     {
                         new Claim(ClaimTypes.Role, request.Role),
                         new Claim(ClaimTypes.Email, request.Login),
+                        new Claim(ClaimTypes.NameIdentifier, user.Value.Id.ToString())
                     };
                     var jwttoken = jwtService.GenerateToken(new JwtRequest()
                     {

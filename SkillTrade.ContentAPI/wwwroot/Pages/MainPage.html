@@ -16,9 +16,9 @@
                 <span>SkillTrade</span>
             </a>
             <div class="nav-links">
-                <a href="#" class="active">Главная</a>
-                <a href="profile.html">Профиль</a>
-                <a href="author-panel.html">Для авторов</a>
+                <a href="/api/content/main" class="active">Главная</a>
+                <a href="/api/content/profile">Профиль</a>
+                <a href="/api/content/actor">Для авторов</a>
             </div>
             <div class="user-menu" onclick="logout()">
                 <i class="fas fa-user"></i>
@@ -58,11 +58,16 @@
             <div class="result-count" id="resultCount">Показано 0 курсов</div>
         </div>
 
-        <div class="courses-grid" id="coursesGrid"></div>
+        <div class="courses-grid" id="coursesGrid">
+            <div style="text-align:center; padding:60px; color:#94A3D8;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 32px;"></i>
+                <p>Загрузка курсов...</p>
+            </div>
+        </div>
     </div>
 
     <footer>
-        <p>© 2025 SkillTrade — Образовательная платформа нового поколения</p>
+        <p>© 2026 SkillTrade — Образовательная платформа нового поколения</p>
     </footer>
 
     <div class="modal-overlay" id="courseModal">
@@ -76,82 +81,31 @@
     </div>
 
     <script>
-        const coursesData = [
-            {
-                id: 1,
-                title: "Fullstack JavaScript: от новичка до PRO",
-                description: "Освой React, Node.js, MongoDB и создавай современные веб-приложения. Более 40 часов контента, 5 проектов в портфолио.",
-                level: "middle",
-                lessonsCount: 48,
-                duration: 46,
-                price: 4990,
-                image: "https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=600",
-                author: "Алексей Иванов"
-            },
-            {
-                id: 2,
-                title: "Python для Data Science и AI",
-                description: "NumPy, Pandas, визуализация, основы машинного обучения. Итоговый проект — анализ данных.",
-                level: "beginner",
-                lessonsCount: 32,
-                duration: 28,
-                price: 3990,
-                image: "https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=600",
-                author: "Екатерина Смирнова"
-            },
-            {
-                id: 3,
-                title: "UI/UX дизайн с нуля до профи",
-                description: "Figma, прототипирование, дизайн-системы, портфолио. Поймешь мысли пользователей.",
-                level: "beginner",
-                lessonsCount: 28,
-                duration: 32,
-                price: 3490,
-                image: "https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=600",
-                author: "Мария Тихонова"
-            },
-            {
-                id: 4,
-                title: "C# ASP.NET Core: микросервисы",
-                description: "Создание масштабируемых бэкенд-решений, Entity Framework, Docker, RabbitMQ.",
-                level: "advanced",
-                lessonsCount: 58,
-                duration: 52,
-                price: 7490,
-                image: "https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=600",
-                author: "Дмитрий Белов"
-            },
-            {
-                id: 5,
-                title: "React + TypeScript: enterprise",
-                description: "Хуки, контекст, RTK Query, тестирование, оптимизация производительности.",
-                level: "middle",
-                lessonsCount: 38,
-                duration: 34,
-                price: 5490,
-                image: "https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=600",
-                author: "Олег Ковальчук"
-            },
-            {
-                id: 6,
-                title: "Кибербезопасность: основы",
-                description: "Атаки и защита, криптография, безопасная разработка, этичный хакинг.",
-                level: "advanced",
-                lessonsCount: 44,
-                duration: 40,
-                price: 6990,
-                image: "https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&cs=tinysrgb&w=600",
-                author: "Роман Захаров"
-            }
-        ];
-
-        let myCourses = [
-            { courseId: 1, progress: 65, subscribedAt: "2025-03-15", totalLessons: 48, currentLesson: 31 },
-            { courseId: 2, progress: 30, subscribedAt: "2025-04-01", totalLessons: 32, currentLesson: 10 }
-        ];
-
+        let allCourses = [];
+        let userSubscriptions = [];  // Теперь храним объекты UserCourses
+        let currentUserId = null;
         let currentLevelFilter = "all";
         let currentSearchTerm = "";
+
+        function getUserIdFromJWT() {
+            try {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'jwt') {
+                        const decoded = parseJwt(value);
+                        if (decoded) {
+                            return decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || null;
+                        }
+                        break;
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting user ID from JWT:', error);
+                return null;
+            }
+        }
 
         function parseJwt(token) {
             try {
@@ -212,54 +166,194 @@
             }
         }
 
+        async function loadAllCourses() {
+            try {
+                console.log('Загрузка курсов...');
+                const response = await fetch('/api/courses/all', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    allCourses = await response.json();
+                    console.log('Загружено курсов:', allCourses.length);
+                    return allCourses;
+                } else {
+                    console.error('Ошибка загрузки курсов:', response.status);
+                }
+            } catch (error) {
+                console.error('Error loading courses:', error);
+            }
+            return [];
+        }
+
+        async function searchCoursesByName(name) {
+            try {
+                const response = await fetch('/api/courses/search/name', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name }),
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    allCourses = await response.json();
+                    renderCourses();
+                }
+            } catch (error) {
+                console.error('Error searching courses:', error);
+            }
+        }
+
+        async function getCourseById(courseId) {
+            try {
+                const response = await fetch('/api/courses/search/id', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: courseId }),
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (error) {
+                console.error('Error getting course:', error);
+            }
+            return null;
+        }
+
+        async function loadMyCourses() {
+            const userId = getUserIdFromJWT();
+            if (!userId) return [];
+
+            try {
+                const response = await fetch('/api/courses/search/my', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: userId }),
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    // Теперь получаем массив UserCourses объектов
+                    userSubscriptions = await response.json();
+                    console.log('Загружено подписок:', userSubscriptions.length);
+                    return userSubscriptions;
+                }
+            } catch (error) {
+                console.error('Error loading my courses:', error);
+            }
+            return [];
+        }
+
+        async function getProgress(courseId) {
+            const userId = getUserIdFromJWT();
+            if (!userId) return 0;
+
+            try {
+                const response = await fetch('/api/courses/progres', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: courseId }),
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (error) {
+                console.error('Error getting progress:', error);
+            }
+            return 0;
+        }
+
+        async function subscribeToCourse(courseId, totalLessons) {
+            const userId = getUserIdFromJWT();
+            if (!userId) {
+                showToast('❌ Необходимо авторизоваться', 'error');
+                window.location.href = '/api/content/login';
+                return false;
+            }
+
+            try {
+                const response = await fetch('/api/courses/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        courseId: courseId,
+                        totalProgress: totalLessons
+                    }),
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    return true;
+                } else {
+                    const error = await response.text();
+                    showToast(error || 'Ошибка при подписке', 'error');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error subscribing:', error);
+                showToast('Ошибка сервера', 'error');
+                return false;
+            }
+        }
+
+        // Обновлённая функция проверки подписки
+        function isSubscribed(courseId) {
+            // Проверяем, есть ли курс в массиве подписок по CourseId
+            return userSubscriptions.some(sub => sub.courseId === courseId);
+        }
+
+        // Получить прогресс из данных подписки
+        function getSubscriptionProgress(courseId) {
+            const subscription = userSubscriptions.find(sub => sub.courseId === courseId);
+            return subscription ? subscription.currentProgress : 0;
+        }
+
         function getLevelText(level) {
             const levels = { beginner: "Начинающий", middle: "Средний", advanced: "Продвинутый" };
             return levels[level] || level;
         }
 
-        function isSubscribed(courseId) {
-            return myCourses.some(c => c.courseId === courseId);
-        }
-
-        function getCourseProgress(courseId) {
-            const course = myCourses.find(c => c.courseId === courseId);
-            return course ? course.progress : 0;
-        }
-
         function getFilteredCourses() {
-            return coursesData.filter(course => {
+            if (!allCourses || allCourses.length === 0) return [];
+            return allCourses.filter(course => {
                 const levelMatch = currentLevelFilter === "all" || course.level === currentLevelFilter;
                 const searchMatch = currentSearchTerm === "" ||
-                    course.title.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
-                    course.description.toLowerCase().includes(currentSearchTerm.toLowerCase());
+                    (course.title && course.title.toLowerCase().includes(currentSearchTerm.toLowerCase())) ||
+                    (course.description && course.description.toLowerCase().includes(currentSearchTerm.toLowerCase()));
                 return levelMatch && searchMatch;
             });
         }
 
-        function renderMyCourses() {
+        async function renderMyCourses() {
             const container = document.getElementById('myCoursesGrid');
             const section = document.getElementById('myCoursesSection');
 
-            if (myCourses.length === 0) {
-                section.style.display = 'none';
-                return;
-            }
+            if (!container) return;
 
-            section.style.display = 'block';
-
-            const myCoursesWithData = myCourses.map(mc => {
-                const course = coursesData.find(c => c.id === mc.courseId);
-                return { ...mc, ...course };
-            }).filter(c => c.title);
+            // Получаем ID курсов, на которые подписан пользователь
+            const subscribedCourseIds = userSubscriptions.map(sub => sub.courseId);
+            const myCoursesWithData = allCourses.filter(course => subscribedCourseIds.includes(course.id));
 
             if (myCoursesWithData.length === 0) {
                 section.style.display = 'none';
                 return;
             }
 
-            container.innerHTML = myCoursesWithData.map(course => `
+            section.style.display = 'block';
+
+            // Объединяем данные курса с данными прогресса из подписки
+            const coursesWithProgress = myCoursesWithData.map(course => {
+                const subscription = userSubscriptions.find(sub => sub.courseId === course.id);
+                return {
+                    ...course,
+                    progress: subscription ? subscription.currentProgress : 0,
+                    totalProgress: subscription ? subscription.totalProgress : course.lessonsCount
+                };
+            });
+
+            container.innerHTML = coursesWithProgress.map(course => `
                     <div class="my-course-card">
-                        <div class="card-img" style="background-image: linear-gradient(0deg, #0B0F1C, transparent), url('${course.image}'); background-size: cover; height: 140px;">
+                        <div class="card-img" style="background-image: linear-gradient(0deg, #0B0F1C, transparent), url('https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=600'); background-size: cover; height: 140px;">
                             <span class="level-badge">${getLevelText(course.level)}</span>
                         </div>
                         <div class="card-content">
@@ -272,8 +366,8 @@
                                 <div class="progress-bar-container">
                                     <div class="progress-bar" style="width: ${course.progress}%;"></div>
                                 </div>
-                                <button class="continue-btn" onclick="continueLearning(${course.courseId})">
-                                    <i class="fas fa-play"></i> Продолжить урок ${course.currentLesson || 1}/${course.totalLessons}
+                                <button class="continue-btn" onclick="continueLearning('${course.id}')">
+                                    <i class="fas fa-play"></i> Продолжить обучение
                                 </button>
                             </div>
                         </div>
@@ -282,11 +376,16 @@
         }
 
         function renderCourses() {
-            const filtered = getFilteredCourses();
             const container = document.getElementById('coursesGrid');
             const resultCountSpan = document.getElementById('resultCount');
 
-            resultCountSpan.innerText = `Показано ${filtered.length} курсов`;
+            if (!container) return;
+
+            const filtered = getFilteredCourses();
+
+            if (resultCountSpan) {
+                resultCountSpan.innerText = `Показано ${filtered.length} курсов`;
+            }
 
             if (filtered.length === 0) {
                 container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:60px; color:#94A3D8;">😔 Ничего не найдено. Попробуйте изменить запрос</div>`;
@@ -297,19 +396,18 @@
                 const subscribed = isSubscribed(course.id);
                 return `
                         <div class="course-card" data-id="${course.id}">
-                            <div class="card-img" style="background-image: linear-gradient(0deg, #0B0F1C, transparent), url('${course.image}'); background-size: cover;">
+                            <div class="card-img" style="background-image: linear-gradient(0deg, #0B0F1C, transparent), url('https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=600'); background-size: cover;">
                                 <span class="level-badge"><i class="fas fa-signal"></i> ${getLevelText(course.level)}</span>
                             </div>
                             <div class="card-content">
                                 <div class="card-title">${escapeHtml(course.title)}</div>
-                                <div class="card-description">${escapeHtml(course.description.substring(0, 85))}${course.description.length > 85 ? '…' : ''}</div>
+                                <div class="card-description">${escapeHtml(course.description ? course.description.substring(0, 85) : '')}${course.description && course.description.length > 85 ? '…' : ''}</div>
                                 <div class="card-meta">
-                                    <span><i class="far fa-clock"></i> ${course.duration} ч</span>
-                                    <span><i class="fas fa-book-open"></i> ${course.lessonsCount} уроков</span>
-                                    <span><i class="fas fa-user-graduate"></i> ${course.author}</span>
+                                    <span><i class="far fa-clock"></i> ${course.durationTimeHours || 0} ч</span>
+                                    <span><i class="fas fa-book-open"></i> ${course.lessonsCount || 0} уроков</span>
                                 </div>
                                 <div class="card-footer">
-                                    <span class="card-price">${course.price.toLocaleString()} ₽</span>
+                                    <span class="card-price">${(course.price || 0).toLocaleString()} ₽</span>
                                     <button class="btn-enroll ${subscribed ? 'btn-subscribed' : ''}" data-id="${course.id}">
                                         ${subscribed ? '<i class="fas fa-check"></i> Записан' : '<i class="fas fa-plus"></i> Записаться'}
                                     </button>
@@ -319,45 +417,68 @@
                     `;
             }).join('');
 
+            attachEventHandlers();
+        }
+
+        function attachEventHandlers() {
             document.querySelectorAll('.btn-enroll').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const courseId = parseInt(btn.getAttribute('data-id'));
-                    openCourseModal(courseId);
-                });
+                btn.removeEventListener('click', handleEnrollClick);
+                btn.addEventListener('click', handleEnrollClick);
             });
 
             document.querySelectorAll('.course-card').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('btn-enroll')) return;
-                    const id = parseInt(card.getAttribute('data-id'));
-                    openCourseModal(id);
-                });
+                card.removeEventListener('click', handleCardClick);
+                card.addEventListener('click', handleCardClick);
             });
         }
 
-        function openCourseModal(courseId) {
-            const course = coursesData.find(c => c.id === courseId);
+        async function handleEnrollClick(e) {
+            e.stopPropagation();
+            const btn = e.currentTarget;
+            const courseId = btn.getAttribute('data-id');
+            const course = allCourses.find(c => c.id == courseId);
+            if (course && !isSubscribed(courseId)) {
+                const success = await subscribeToCourse(courseId, course.lessonsCount);
+                if (success) {
+                    showToast(`✅ Вы успешно записались на курс "${course.title}"!`, 'success');
+                    await loadMyCourses();
+                    renderCourses();
+                    renderMyCourses();
+                    closeModal();
+                }
+            } else {
+                openCourseModal(courseId);
+            }
+        }
+
+        function handleCardClick(e) {
+            if (e.target.classList.contains('btn-enroll')) return;
+            const card = e.currentTarget;
+            const id = card.getAttribute('data-id');
+            openCourseModal(id);
+        }
+
+        async function openCourseModal(courseId) {
+            const course = await getCourseById(courseId);
             if (!course) return;
 
-            const subscribed = isSubscribed(courseId);
-            const progress = getCourseProgress(courseId);
+            const subscribed = isSubscribed(course.id);
+            const progress = subscribed ? getSubscriptionProgress(course.id) : 0;
 
             document.getElementById('modalTitle').innerText = course.title;
             document.getElementById('modalBody').innerHTML = `
                     <div class="modal-detail"><strong><i class="fas fa-chart-line"></i> Уровень:</strong> ${getLevelText(course.level)}</div>
                     <div class="modal-detail"><strong><i class="fas fa-align-left"></i> Описание:</strong> ${escapeHtml(course.description)}</div>
-                    <div class="modal-detail"><strong><i class="fas fa-hourglass-half"></i> Длительность:</strong> ${course.duration} часов (${course.lessonsCount} уроков)</div>
-                    <div class="modal-detail"><strong><i class="fas fa-chalkboard-user"></i> Автор:</strong> ${course.author}</div>
+                    <div class="modal-detail"><strong><i class="fas fa-hourglass-half"></i> Длительность:</strong> ${course.durationTimeHours || 0} часов (${course.lessonsCount || 0} уроков)</div>
                     ${subscribed ? `
                         <div class="modal-detail"><strong><i class="fas fa-chart-simple"></i> Ваш прогресс:</strong> ${progress}% завершено</div>
                         <div class="progress-bar-container" style="margin-top: 8px;"><div class="progress-bar" style="width: ${progress}%;"></div></div>
                     ` : ''}
                     <div class="enroll-section">
-                        <div><span class="price-modal">${course.price.toLocaleString()} ₽</span> <span style="font-size:14px;">единоразово</span></div>
+                        <div><span class="price-modal">${(course.price || 0).toLocaleString()} ₽</span> <span style="font-size:14px;">единоразово</span></div>
                         ${subscribed ?
-                    `<button class="btn-primary" style="width:auto; padding:12px 28px;" onclick="continueLearning(${course.id})"><i class="fas fa-play"></i> Продолжить обучение</button>` :
-                    `<button class="btn-primary" style="width:auto; padding:12px 28px;" onclick="subscribeToCourse(${course.id})"><i class="fas fa-shopping-cart"></i> Записаться на курс</button>`
+                    `<button class="btn-primary" style="width:auto; padding:12px 28px;" onclick="continueLearning('${course.id}')"><i class="fas fa-play"></i> Продолжить обучение</button>` :
+                    `<button class="btn-primary" style="width:auto; padding:12px 28px;" onclick="subscribeAndClose('${course.id}', ${course.lessonsCount || 0}, '${escapeHtml(course.title)}')"><i class="fas fa-shopping-cart"></i> Записаться на курс</button>`
                 }
                     </div>
                     <div style="margin-top:16px; font-size:12px; background:#0F1424; border-radius:20px; padding:12px; text-align:center;">
@@ -367,39 +488,21 @@
             document.getElementById('courseModal').classList.add('active');
         }
 
-        function subscribeToCourse(courseId) {
-            const course = coursesData.find(c => c.id === courseId);
-            if (!course) return;
-
-            const userBalance = 4250;
-            if (course.price > userBalance) {
-                showToast(`❌ Недостаточно средств. Пополните баланс (нужно ${course.price.toLocaleString()} ₽)`, 'error');
-                return;
+        async function subscribeAndClose(courseId, totalLessons, courseTitle) {
+            const success = await subscribeToCourse(courseId, totalLessons);
+            if (success) {
+                showToast(`✅ Вы успешно записались на курс "${courseTitle}"!`, 'success');
+                await loadMyCourses();
+                renderCourses();
+                renderMyCourses();
+                closeModal();
             }
-
-            const newSubscription = {
-                courseId: courseId,
-                progress: 0,
-                subscribedAt: new Date().toISOString().split('T')[0],
-                totalLessons: course.lessonsCount,
-                currentLesson: 1
-            };
-            myCourses.push(newSubscription);
-
-            renderMyCourses();
-            renderCourses();
-            closeModal();
-            showToast(`✅ Вы успешно записались на курс "${course.title}"!`, 'success');
         }
 
         function continueLearning(courseId) {
-            const course = coursesData.find(c => c.id === courseId);
-            const subscription = myCourses.find(c => c.courseId === courseId);
-            if (!course || !subscription) return;
-
-            showToast(`🎓 Переход к уроку ${subscription.currentLesson || 1} курса "${course.title}"`, 'info');
+            showToast(`🎓 Переход к обучению...`, 'info');
             setTimeout(() => {
-                window.location.href = `learning.html?course=${courseId}&lesson=${subscription.currentLesson || 1}`;
+                window.location.href = `learning.html?course=${courseId}`;
             }, 1000);
         }
 
@@ -456,8 +559,15 @@
         });
 
         function performSearch() {
-            currentSearchTerm = document.getElementById('searchInput').value.trim();
-            renderCourses();
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            currentSearchTerm = searchTerm;
+            if (searchTerm) {
+                searchCoursesByName(searchTerm);
+            } else {
+                loadAllCourses().then(() => {
+                    renderCourses();
+                });
+            }
         }
 
         document.getElementById('searchBtn').addEventListener('click', performSearch);
@@ -469,10 +579,15 @@
             if (e.target === document.getElementById('courseModal')) closeModal();
         });
 
-        updateUserLoginDisplay();
+        async function init() {
+            updateUserLoginDisplay();
+            await loadAllCourses();
+            await loadMyCourses();
+            renderCourses();
+            renderMyCourses();
+        }
 
-        renderMyCourses();
-        renderCourses();
+        init();
     </script>
 </body>
 </html>

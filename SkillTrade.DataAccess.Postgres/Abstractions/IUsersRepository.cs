@@ -17,5 +17,6 @@ namespace SkillTrade.DataAccess.Postgres.Abstractions
         Task<int> UpdateBalanceAsync(Guid userId, decimal newBalance, CancellationToken token);
         Task<bool> VerifyAsync(string login, string password, CancellationToken token);
         Task<string> GetRoleAsync(string login, CancellationToken token);
+        Task<Guid> GetIdAsync(string login, CancellationToken token);
     }
 }

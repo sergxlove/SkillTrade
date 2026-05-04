@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using SkillTrade.DataAccess.Postgres.Configurations;
 using SkillTrade.DataAccess.Postgres.Models;
 
@@ -16,6 +17,8 @@ namespace SkillTrade.DataAccess.Postgres
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.ConfigureWarnings(warnings =>
+                warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
             base.OnConfiguring(optionsBuilder);
         }
 

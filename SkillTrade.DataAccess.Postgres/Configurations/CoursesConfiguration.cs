@@ -47,7 +47,7 @@ namespace SkillTrade.DataAccess.Postgres.Configurations
                     Price = 0,
                     LessonsCount = 3,
                     DurationTimeHours = 46,
-                    CreatedAt = DateTime.Parse("2026-05-03 19:03:30")
+                    CreatedAt = new DateTime(2026, 5, 3, 19, 3, 30, DateTimeKind.Utc)
                 },
                 new CoursesEntity
                 {
@@ -59,7 +59,7 @@ namespace SkillTrade.DataAccess.Postgres.Configurations
                     Price = 0,
                     LessonsCount = 3,
                     DurationTimeHours = 28,
-                    CreatedAt = DateTime.Parse("2026-05-03 19:03:30")
+                    CreatedAt = new DateTime(2026, 5, 3, 19, 3, 30, DateTimeKind.Utc)
                 },
                 new CoursesEntity
                 {
@@ -71,7 +71,7 @@ namespace SkillTrade.DataAccess.Postgres.Configurations
                     Price = 0,
                     LessonsCount = 3,
                     DurationTimeHours = 52,
-                    CreatedAt = DateTime.Parse("2026-05-03 19:03:30")
+                    CreatedAt = new DateTime(2026, 5, 3, 19, 3, 30, DateTimeKind.Utc)
                 },
                 new CoursesEntity
                 {
@@ -83,7 +83,7 @@ namespace SkillTrade.DataAccess.Postgres.Configurations
                     Price = 0,
                     LessonsCount = 3,
                     DurationTimeHours = 34,
-                    CreatedAt = DateTime.Parse("2026-05-03 19:03:30")
+                    CreatedAt = new DateTime(2026, 5, 3, 19, 3, 30, DateTimeKind.Utc)
                 });
         }
     }

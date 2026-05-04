@@ -145,5 +145,12 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             if (user is null) return string.Empty;
             return user.Role;
         }
+
+        public async Task<Guid> GetIdAsync(string login, CancellationToken token)
+        {
+            var user = await _context.UsersTable.FirstOrDefaultAsync(a => a.Login == login, token);
+            if (user is null) return Guid.Empty;
+            return user.Id;
+        }
     }
 }

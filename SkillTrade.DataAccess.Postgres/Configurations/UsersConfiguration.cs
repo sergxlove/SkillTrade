@@ -42,7 +42,7 @@ namespace SkillTrade.DataAccess.Postgres.Configurations
                     HashPassword = "$2a$11$TqnnLCGo8zSb2z9hVzpwSetLTFxczO1ASG6f6Mn7ap7VVi4MPztbO",
                     Role = "student",
                     Balance = 0.00m,
-                    CreatedAt = DateTime.Parse("2026-05-03 19:03:30")
+                    CreatedAt = new DateTime(2026, 5, 3, 19, 3, 30, DateTimeKind.Utc)
                 },
                 new UsersEntity
                 {
@@ -52,7 +52,7 @@ namespace SkillTrade.DataAccess.Postgres.Configurations
                     HashPassword = "$2a$11$KkcWYSsG4a.G3Ax9vpK7f.VpR.AD8rp1P/tOBhMUityHntW366ZH.",
                     Role = "actor",
                     Balance = 0.00m,
-                    CreatedAt = DateTime.Parse("2026-05-03 19:03:30")
+                    CreatedAt = new DateTime(2026, 5, 3, 19, 3, 30, DateTimeKind.Utc)
                 },
                 new UsersEntity
                 {
@@ -62,7 +62,7 @@ namespace SkillTrade.DataAccess.Postgres.Configurations
                     HashPassword = "$2a$11$TPVCYIUVQQ1H5DTLLjcRDOBGzPe4cAJ/rod66GzgGhrSEOFSz2k/O",
                     Role = "admin",
                     Balance = 0.00m,
-                    CreatedAt = DateTime.Parse("2026-05-03 19:03:30")
+                    CreatedAt = new DateTime(2026, 5, 3, 19, 3, 30, DateTimeKind.Utc)
                 }
                 );
         }

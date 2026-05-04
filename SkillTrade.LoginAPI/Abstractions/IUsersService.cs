@@ -18,5 +18,7 @@ namespace SkillTrade.LoginAPI.Abstractions
         Task<bool> VerifyAsync(string login, string password, CancellationToken token);
         Task<string> GetRoleAsync(string login, CancellationToken token);
         Task<Guid> GetIdAsync(string login, CancellationToken token);
+        Task<decimal> GetBalanceAsync(Guid id, CancellationToken token);
+        Task<int> UpdatePasswordAsync(Guid id, string hashNewPassword, CancellationToken token);
     }
 }

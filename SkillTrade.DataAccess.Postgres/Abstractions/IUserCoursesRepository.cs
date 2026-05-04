@@ -15,5 +15,7 @@ namespace SkillTrade.DataAccess.Postgres.Abstractions
         Task<bool> IsUserSubscribedAsync(Guid userId, Guid courseId, CancellationToken token);
         Task<int> UpdateProgressAsync(Guid userCourseId, int newProgress, CancellationToken token);
         Task<int> GetProgressAsync(Guid courseId, CancellationToken token);
+        Task<int> CountStartedCoursesAsync(Guid userId, CancellationToken token);
+        Task<int> CountEndedCoursesAsync(Guid userId, CancellationToken token);
     }
 }

@@ -29,6 +29,8 @@ namespace SkillTrade.LoginAPI
                 options.UseNpgsql(postgresSetting["ConnectionString"]));
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IUsersService, UsersService>();
+            builder.Services.AddScoped<IUserCoursesRepository, UserCoursesRepository>();
+            builder.Services.AddScoped<IUserCoursesService, UserCoursesService>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
             builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

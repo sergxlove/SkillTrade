@@ -1,8 +1,8 @@
 ﻿using SkillTrade.Core.Models;
-using SkillTrade.CoursesAPI.Abstractions;
 using SkillTrade.DataAccess.Postgres.Abstractions;
+using SkillTrade.LoginAPI.Abstractions;
 
-namespace SkillTrade.CoursesAPI.Services
+namespace SkillTrade.LoginAPI.Services
 {
     public class UserCoursesService : IUserCoursesService
     {

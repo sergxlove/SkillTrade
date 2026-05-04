@@ -136,5 +136,19 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             return await _context.UserCoursesTable
                 .CountAsync(uc => uc.CourseId == courseId, token);
         }
+
+        public async Task<int> CountStartedCoursesAsync(Guid userId, CancellationToken token)
+        {
+            return await _context.UserCoursesTable
+                .AsNoTracking()
+                .CountAsync(a => a.Id == userId, token);
+        }
+
+        public async Task<int> CountEndedCoursesAsync(Guid userId, CancellationToken token)
+        {
+            return await _context.UserCoursesTable
+                .AsNoTracking()
+                .CountAsync(a => a.Id == userId && a.CurrentProgress == a.TotalProgress, token);
+        }
     }
 }

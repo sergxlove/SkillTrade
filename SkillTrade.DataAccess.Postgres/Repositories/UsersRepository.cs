@@ -100,6 +100,14 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 .SetProperty(a => a.Balance, newBalance), token);
         }
 
+        public async Task<int> UpdatePasswordAsync(Guid id, string hashNewPassword, CancellationToken token)
+        {
+            return await _context.UsersTable
+                .Where(a => a.Id == id)
+                .ExecuteUpdateAsync(a => a
+                .SetProperty(a => a.HashPassword, hashNewPassword), token);
+        }
+
         public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
             return await _context.UsersTable
@@ -151,6 +159,13 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
             var user = await _context.UsersTable.FirstOrDefaultAsync(a => a.Login == login, token);
             if (user is null) return Guid.Empty;
             return user.Id;
+        }
+
+        public async Task<decimal> GetBalanceAsync(Guid id, CancellationToken token)
+        {
+            var user = await _context.UsersTable.FirstOrDefaultAsync(a => a.Id == id, token);
+            if (user is null) return 0;
+            return user.Balance;
         }
     }
 }

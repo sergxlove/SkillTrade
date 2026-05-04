@@ -67,5 +67,13 @@ namespace SkillTrade.LoginAPI.Services
         {
             return await _repository.GetIdAsync(login, token);
         }
+        public async Task<decimal> GetBalanceAsync(Guid id, CancellationToken token)
+        {
+            return await _repository.GetBalanceAsync(id, token);
+        }
+        public async Task<int> UpdatePasswordAsync(Guid id, string hashNewPassword, CancellationToken token)
+        {
+            return await _repository.UpdatePasswordAsync(id, hashNewPassword, token);
+        }
     }
 }

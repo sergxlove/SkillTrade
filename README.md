@@ -10,3 +10,11 @@
 ## About
 
 SkillTrade is a multi-user educational platform built on .NET microservice architecture that allows students to find and complete paid courses with progress tracking, authors to create and manage their courses with a user-friendly visual lesson editor, and administrators to moderate content and manage users. The system includes JWT authentication, a YARP API gateway, PostgreSQL via Entity Framework Core, integration with MinIO for file storage, and a fully-featured frontend (HTML/CSS/JS) that provides a user-friendly interface for all roles.
+
+## Architecture 
+
+![image](https://github.com/sergxlove/SkillTrade/blob/master/Resources/architecture.png)
+
+## Preview 
+
+## Install 

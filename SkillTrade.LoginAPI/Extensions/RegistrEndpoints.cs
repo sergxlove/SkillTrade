@@ -8,6 +8,7 @@ namespace SkillTrade.LoginAPI.Extensions
         {
             app.MapLoginEndpoints();
             app.MapUserEndpoints();
+            app.MapAdminEndpoints();
 
             return app;
         }

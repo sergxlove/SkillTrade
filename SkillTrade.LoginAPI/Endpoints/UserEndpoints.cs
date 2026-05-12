@@ -4,7 +4,6 @@ using SkillTrade.Core.Models;
 using SkillTrade.LoginAPI.Abstractions;
 using SkillTrade.LoginAPI.Requests;
 using SkillTrade.LoginAPI.Responce;
-using SkillTrade.LoginAPI.Services;
 
 namespace SkillTrade.LoginAPI.Endpoints
 {

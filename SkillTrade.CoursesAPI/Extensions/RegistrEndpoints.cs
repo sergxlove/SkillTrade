@@ -6,7 +6,8 @@ namespace SkillTrade.CoursesAPI.Extensions
     {
         public static IEndpointRouteBuilder MapAllEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapCoursesEndpoints(); 
+            app.MapCoursesEndpoints();
+            app.MapLessonsEndpoints();
 
             return app;
         }

@@ -33,6 +33,7 @@ namespace SkillTrade.LoginAPI
             builder.Services.AddScoped<IUserCoursesService, UserCoursesService>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
             builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

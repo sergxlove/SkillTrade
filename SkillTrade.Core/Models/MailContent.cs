@@ -5,6 +5,7 @@
         public Guid Id { get; }
         public MailType Type { get; }
         public string EmailTo { get; } = string.Empty;
+        public string Code { get; } = string.Empty;
     }
 
     public enum MailType

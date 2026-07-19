@@ -9,6 +9,7 @@
   <Project Path="SkillTrade.DataAccess.S3Minio/SkillTrade.DataAccess.S3Minio.csproj" Id="d6fb7be6-afae-4e1a-9e06-180f6d578919" />
   <Project Path="SkillTrade.LoginAPI/SkillTrade.LoginAPI.csproj" />
   <Project Path="SkillTrade.MailService/SkillTrade.MailService.csproj" Id="a714e5c6-967c-4dfd-8c2a-9be4a0ec32f0" />
+  <Project Path="SkillTrade.MessageBroker.RabbitMQ/SkillTrade.MessageBroker.RabbitMQ.csproj" Id="6461fb35-f765-42e2-86b5-72371e097e1e" />
   <Project Path="SkillTrade.Proxy/SkillTrade.Proxy.csproj" />
   <Project Path="SkillTrade.Tests/SkillTrade.Tests.csproj" Id="22efb38c-8414-4671-82b0-e186c58a7c60" />
 </Solution>

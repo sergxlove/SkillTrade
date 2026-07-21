@@ -1,19 +1,24 @@
 ﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using SkillTrade.MessageBroker.RabbitMQ.Abstractions;
 using SkillTrade.MessageBroker.RabbitMQ.Models;
 using System.Text;
 using System.Text.Json;
 
 namespace SkillTrade.MessageBroker.RabbitMQ.Services
 {
-    public class ProviderRabbitMQService : IDisposable
+    public class ProviderRabbitMQService : IDisposable, IProviderRabbitMQService
     {
         private IConnection _connection;
         private IChannel _channel;
-        public string ExchangeName { get; set; } = "default";
+        private string _exchangeName { get; set; } = "default";
         private readonly Dictionary<RoutingKeys, string> _queueMappings = new()
         {
             [RoutingKeys.Emails] = "emails_queue",
+        };
+        private JsonSerializerOptions _jsonOptions = new JsonSerializerOptions()
+        {
+            WriteIndented = false
         };
         private bool _isDisposed;
 
@@ -26,8 +31,11 @@ namespace SkillTrade.MessageBroker.RabbitMQ.Services
         public static async Task<ProviderRabbitMQService> CreateAsync()
         {
             var factory = new ConnectionFactory
-            { 
-                HostName = "localhost" 
+            {
+                HostName = "localhost",  
+                Port = 5672,
+                UserName = "admin",
+                Password = "admin123"
             };
             var connection = await factory.CreateConnectionAsync();
             var channel = await connection.CreateChannelAsync();
@@ -54,7 +62,7 @@ namespace SkillTrade.MessageBroker.RabbitMQ.Services
                 );
                 await _channel.QueueBindAsync(
                     queue: queueName,
-                    exchange: ExchangeName,
+                    exchange: _exchangeName,
                     routingKey: key
                 );
             }
@@ -81,16 +89,13 @@ namespace SkillTrade.MessageBroker.RabbitMQ.Services
             try
             {
                 string key = RoutingKeysToString(routingKey);
-                string json = JsonSerializer.Serialize(message, new JsonSerializerOptions
-                {
-                    WriteIndented = false
-                });
+                string json = JsonSerializer.Serialize(message, _jsonOptions);
                 byte[] body = Encoding.UTF8.GetBytes(json);
                 if (!_channel.IsOpen)
                 {
                     return false;
                 }
-                await _channel.BasicPublishAsync(exchange: ExchangeName, routingKey: key, body: body);
+                await _channel.BasicPublishAsync(exchange: _exchangeName, routingKey: key, body: body);
                 return true;
             }
             catch
@@ -99,7 +104,7 @@ namespace SkillTrade.MessageBroker.RabbitMQ.Services
             }
         }
 
-        public async Task<bool> ReceiveMessageAsync(RoutingKeys routingKey, Func<string, Task> messageHandler)
+        public async Task<bool> ReceiveMessageAsync(RoutingKeys routingKey, Func<string, Task<string>> messageHandler)
         {
             try
             {
@@ -113,7 +118,7 @@ namespace SkillTrade.MessageBroker.RabbitMQ.Services
                 string key = RoutingKeysToString(routingKey);
                 await _channel.QueueBindAsync(
                     queue: queueName,
-                    exchange: ExchangeName,
+                    exchange: _exchangeName,
                     routingKey: key
                 );
                 var consumer = new AsyncEventingBasicConsumer(_channel);
@@ -137,7 +142,7 @@ namespace SkillTrade.MessageBroker.RabbitMQ.Services
                 };
                 await _channel.BasicConsumeAsync(
                     queue: queueName,
-                    autoAck: false,  
+                    autoAck: false,
                     consumer: consumer
                 );
                 return true;

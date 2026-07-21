@@ -14,5 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SkillTrade.Core\SkillTrade.Core.csproj" />
+    <ProjectReference Include="..\SkillTrade.MessageBroker.RabbitMQ\SkillTrade.MessageBroker.RabbitMQ.csproj" />
   </ItemGroup>
 </Project>

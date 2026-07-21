@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  webbuilder-db:
+  skilltrade-db:
     image: postgres:15-alpine
     container_name: skilltrade-db
     environment:
@@ -13,5 +13,20 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/dataskilltrade
     restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"      
+      - "15672:15672"    
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 volumes:
   postgres-data:
+  rabbitmq_data:

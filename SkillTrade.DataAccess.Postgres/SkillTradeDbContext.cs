@@ -14,6 +14,7 @@ namespace SkillTrade.DataAccess.Postgres
         public DbSet<LessonsEntity> LessonsTable { get; set; }
         public DbSet<UserCoursesEntity> UserCoursesTable { get; set; }
         public DbSet<UsersEntity> UsersTable { get; set; }
+        public DbSet<VerifyOperationsEntity> VerifyOperationsTable { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,6 +29,7 @@ namespace SkillTrade.DataAccess.Postgres
             modelBuilder.ApplyConfiguration(new LessonsConfiguration());
             modelBuilder.ApplyConfiguration(new UserCoursesConfiguration());
             modelBuilder.ApplyConfiguration(new UsersConfiguration());
+            modelBuilder.ApplyConfiguration(new VerifyOperationsConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SkillTrade.Core\SkillTrade.Core.csproj" />
     <ProjectReference Include="..\SkillTrade.DataAccess.Postgres\SkillTrade.DataAccess.Postgres.csproj" />
+    <ProjectReference Include="..\SkillTrade.MailService\SkillTrade.MailService.csproj" />
   </ItemGroup>
 
 </Project>

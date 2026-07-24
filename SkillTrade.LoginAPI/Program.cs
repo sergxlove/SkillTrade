@@ -13,6 +13,8 @@ using SkillTrade.DataAccess.Postgres.Repositories;
 using SkillTrade.LoginAPI.Abstractions;
 using SkillTrade.LoginAPI.Extensions;
 using SkillTrade.LoginAPI.Services;
+using SkillTrade.MailService.Abstractions;
+using SkillTrade.MailService.Services;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -31,8 +33,12 @@ namespace SkillTrade.LoginAPI
             builder.Services.AddScoped<IUsersService, UsersService>();
             builder.Services.AddScoped<IUserCoursesRepository, UserCoursesRepository>();
             builder.Services.AddScoped<IUserCoursesService, UserCoursesService>();
+            builder.Services.AddScoped<IVerifyOperationsRepository, VerifyOperationsRepository>();
+            builder.Services.AddScoped<IVerifyOperationService, VerifyOperationService>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
             builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
+            builder.Services.AddScoped<ISendMailService, SendMailService>();
+            builder.Services.AddScoped<ICodeGeneratorService, CodeGeneratorService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

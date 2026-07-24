@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SkillTrade.Core.Abstractions;
+using SkillTrade.Core.Infrastructures;
 using SkillTrade.Core.Models;
 using SkillTrade.Core.Requests;
 using SkillTrade.LoginAPI.Abstractions;
 using SkillTrade.LoginAPI.Requests;
+using SkillTrade.MailService.Abstractions;
 using System.Security.Claims;
 
 namespace SkillTrade.LoginAPI.Endpoints
@@ -92,6 +94,48 @@ namespace SkillTrade.LoginAPI.Endpoints
                     return Results.InternalServerError();
                 }
             }).RequireRateLimiting("GeneralPolicy");
+
+            app.MapPost("/api/login/restore", async (HttpContext context,
+                EmailRequest request,
+                [FromServices] IUsersService userService,
+                [FromServices] ISendMailService sendMailService,
+                [FromServices] ICodeGeneratorService codeGeneratorService,
+                [FromServices] IVerifyOperationService verifyOperationService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (request.Email == string.Empty)
+                        return Results.BadRequest("Некорректный Email");
+                    if (!await userService.ExistsByLoginAsync(request.Email, token))
+                    {
+                        return Results.BadRequest("Пользователь с данным Email не найден");
+                    }
+                    string codeVerify = codeGeneratorService.GenerateCode(6);
+                    ResultModel<VerifyOperations> verifyOp = VerifyOperations.Create(request.Email,
+                        codeVerify, DateTime.UtcNow, 3);
+                    if (verifyOp.Error != string.Empty)
+                        return Results.BadRequest($"{verifyOp.Error}");
+                    var resOp = verifyOperationService.AddAsync(verifyOp.Value, token);
+                    ResultModel<MailContent> mail = MailContent.Create(MailType.Restore, request.Email, 
+                        codeGeneratorService.GenerateCode(6));
+                    if(mail.Error != string.Empty)
+                        return Results.BadRequest($"{mail.Error}");
+                    bool resultEmail = await sendMailService.SendEmailAsync(mail.Value, token);
+                    if (!resultEmail)
+                        return Results.BadRequest("Произошла ошибка при отправке");
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
+            app.MapPost("/api/login/verify", () =>
+            {
+
+            });
 
             app.MapGet("/api/login/logout", (HttpContext context) =>
             {

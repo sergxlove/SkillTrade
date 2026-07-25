@@ -18,6 +18,8 @@ namespace SkillTrade.DataAccess.Postgres.Configurations
                 .IsRequired();
             builder.Property(a => a.QuantityTry)
                 .IsRequired();
+            builder.Property(a => a.TypeOperation)
+                .IsRequired();
             builder.HasIndex(a => a.Email);
         }
     }

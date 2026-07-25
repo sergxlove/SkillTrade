@@ -105,6 +105,8 @@ namespace SkillTrade.LoginAPI.Endpoints
             {
                 try
                 {
+                    if (request is null)
+                        return Results.BadRequest("Пустой запрос");
                     if (request.Email == string.Empty)
                         return Results.BadRequest("Некорректный Email");
                     if (!await userService.ExistsByLoginAsync(request.Email, token))
@@ -113,7 +115,7 @@ namespace SkillTrade.LoginAPI.Endpoints
                     }
                     string codeVerify = codeGeneratorService.GenerateCode(6);
                     ResultModel<VerifyOperations> verifyOp = VerifyOperations.Create(request.Email,
-                        codeVerify, DateTime.UtcNow, 3);
+                        codeVerify, DateTime.UtcNow, 3, MailType.Restore);
                     if (verifyOp.Error != string.Empty)
                         return Results.BadRequest($"{verifyOp.Error}");
                     var resOp = verifyOperationService.AddAsync(verifyOp.Value, token);
@@ -132,9 +134,42 @@ namespace SkillTrade.LoginAPI.Endpoints
                 }
             });
 
-            app.MapPost("/api/login/verify", () =>
+            app.MapPost("/api/login/verify", async (HttpContext context,
+                VerifyRequest request,
+                [FromServices] IVerifyOperationService verifyOperationService,
+                CancellationToken token) =>
             {
-
+                try
+                {
+                    if (request is null)
+                        return Results.BadRequest("Пустой запрос");
+                    if (request.Email == string.Empty)
+                        return Results.BadRequest("Некорректный Email");
+                    if (request.Code == string.Empty)
+                        return Results.BadRequest("Некорректный Code");
+                    ResultModel<VerifyOperations> op = VerifyOperations.Create(request.Email,
+                        request.Code, DateTime.UtcNow, 3, MailType.None);
+                    if(op.Error != string.Empty)
+                        return Results.BadRequest($"{op.Error}");
+                    bool resultVerify = await verifyOperationService.VerifyAsync(op.Value, 15, token);
+                    if(!resultVerify)
+                    {
+                        await verifyOperationService.IncrementTryAsync(request.Email, token);
+                        return Results.BadRequest("Неверный код");
+                    }
+                    MailType typeOperation = await verifyOperationService.GetTypeOperationAsync(
+                        request.Email, token);
+                    await verifyOperationService.DeleteAsync(request.Email, token);
+                    switch (typeOperation)
+                    {
+                        default:
+                            return Results.InternalServerError();
+                    }
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
             });
 
             app.MapGet("/api/login/logout", (HttpContext context) =>

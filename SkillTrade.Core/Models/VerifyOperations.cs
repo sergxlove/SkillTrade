@@ -9,18 +9,21 @@ namespace SkillTrade.Core.Models
         public string Code { get; } = string.Empty;
         public DateTime DateCreate { get; }
         public int QuantityTry { get; } = 0;
+        public MailType TypeOperation { get; }
 
-        private VerifyOperations(Guid id, string email, string code, DateTime dateCreate, int quantityTry)
+        private VerifyOperations(Guid id, string email, string code, DateTime dateCreate, int quantityTry,
+            MailType typeOperation)
         {
             Id = id;
             Email = email;
             Code = code;
             DateCreate = dateCreate;
             QuantityTry = quantityTry;
+            TypeOperation = typeOperation;
         }
 
         public static ResultModel<VerifyOperations> Create(Guid id, string email, string code, 
-            DateTime dateCreate, int quantityTry)
+            DateTime dateCreate, int quantityTry, MailType typeOperation)
         {
             if (id == Guid.Empty)
                 return ResultModel<VerifyOperations>.Failure("Поле Id не должно быть пустым");
@@ -29,13 +32,13 @@ namespace SkillTrade.Core.Models
             if (code == string.Empty)
                 return ResultModel<VerifyOperations>.Failure("Поле Code не должно быть пустым");
             return ResultModel<VerifyOperations>.Success(new VerifyOperations(id, email, code, 
-                dateCreate, quantityTry));
+                dateCreate, quantityTry, typeOperation));
         }
 
         public static ResultModel<VerifyOperations> Create(string email, string code, DateTime dateCreate, 
-            int quantityTry)
+            int quantityTry, MailType typeOperation)
         {
-            return Create(Guid.NewGuid(), email, code, dateCreate, quantityTry);
+            return Create(Guid.NewGuid(), email, code, dateCreate, quantityTry, typeOperation);
         }
     }
 }

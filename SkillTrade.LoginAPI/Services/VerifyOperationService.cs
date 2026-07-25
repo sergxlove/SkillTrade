@@ -27,5 +27,9 @@ namespace SkillTrade.LoginAPI.Services
         {
             return await _repository.VerifyAsync(oper, minutesValid, token);
         }
+        public async Task<MailType> GetTypeOperationAsync(string email, CancellationToken token)
+        {
+            return await _repository.GetTypeOperationAsync(email, token);
+        }
     }
 }

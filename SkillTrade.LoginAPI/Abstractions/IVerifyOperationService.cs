@@ -8,5 +8,6 @@ namespace SkillTrade.LoginAPI.Abstractions
         Task<int> DeleteAsync(string email, CancellationToken token);
         Task<int> IncrementTryAsync(string email, CancellationToken token);
         Task<bool> VerifyAsync(VerifyOperations oper, int minutesValid, CancellationToken token);
+        Task<MailType> GetTypeOperationAsync(string email, CancellationToken token);
     }
 }

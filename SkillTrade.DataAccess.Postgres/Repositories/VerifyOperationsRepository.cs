@@ -22,6 +22,7 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 Code = oper.Code,
                 DateCreate = oper.DateCreate,
                 QuantityTry = oper.QuantityTry,
+                TypeOperation = oper.TypeOperation
             };
             VerifyOperationsEntity? operFind = await _context.VerifyOperationsTable
                 .FirstOrDefaultAsync(a => a.Email == operEntity.Email, token);
@@ -73,6 +74,15 @@ namespace SkillTrade.DataAccess.Postgres.Repositories
                 return false;
             else
                 return true;
+        }
+
+        public async Task<MailType> GetTypeOperationAsync(string email, CancellationToken token)
+        {
+            VerifyOperationsEntity? operFind = await _context.VerifyOperationsTable
+                .FirstOrDefaultAsync(a => a.Email == email, token);
+            if (operFind is null)
+                return MailType.None;
+            return operFind.TypeOperation;
         }
     }
 }

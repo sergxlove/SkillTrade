@@ -1,4 +1,6 @@
-﻿namespace SkillTrade.DataAccess.Postgres.Models
+﻿using SkillTrade.Core.Models;
+
+namespace SkillTrade.DataAccess.Postgres.Models
 {
     public class VerifyOperationsEntity
     {
@@ -7,5 +9,6 @@
         public string Code { get; set; } = string.Empty;
         public DateTime DateCreate { get; set; }
         public int QuantityTry { get; set; }
+        public MailType TypeOperation { get; set; }
     }
 }

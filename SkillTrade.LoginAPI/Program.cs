@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using SkillTrade.Aspire.ServiceDefault;
 using SkillTrade.Core.Abstractions;
 using SkillTrade.Core.Services;
 using SkillTrade.DataAccess.Postgres;
@@ -125,6 +126,7 @@ namespace SkillTrade.LoginAPI
             builder.Services.AddSwaggerGen();
             builder.WebHost.UseUrls($"http://localhost:{aspnetSetting["Port"]}");
             var app = builder.Build();
+            app.MapDefaultEndpoints();
             app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors("AllowAll");

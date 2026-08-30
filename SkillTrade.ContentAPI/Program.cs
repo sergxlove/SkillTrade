@@ -1,10 +1,8 @@
-using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using SkillTrade.Aspire.ServiceDefault;
 using SkillTrade.ContentAPI.Extensions;
 using SkillTrade.DataAccess.Postgres;
 using System.Text;
@@ -96,16 +94,13 @@ namespace SkillTrade.ContentAPI
                           .AllowCredentials();
                 });
             });
-            builder.Services.AddHealthChecks()
-                .AddCheck("self", () =>
-                {
-                    return HealthCheckResult.Healthy("ok");
-                });
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.WebHost.UseUrls($"http://localhost:{aspnetSetting["Port"]}");
+            builder.AddServiceDefaults();
             var app = builder.Build();
+            app.MapDefaultEndpoints();
             app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors("AllowAll");
@@ -114,10 +109,6 @@ namespace SkillTrade.ContentAPI
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();
-            app.MapHealthChecks("/health", new HealthCheckOptions
-            {
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
             app.MapAllEndpoints();
             app.Run();
         }

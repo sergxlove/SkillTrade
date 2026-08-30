@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SkillTrade.Aspire.ServiceDefault\SkillTrade.Aspire.ServiceDefault.csproj" />
     <ProjectReference Include="..\SkillTrade.Core\SkillTrade.Core.csproj" />
     <ProjectReference Include="..\SkillTrade.DataAccess.Postgres\SkillTrade.DataAccess.Postgres.csproj" />
     <ProjectReference Include="..\SkillTrade.MailService\SkillTrade.MailService.csproj" />

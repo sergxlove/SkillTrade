@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using SkillTrade.Aspire.ServiceDefault;
 using SkillTrade.CoursesAPI.Abstractions;
 using SkillTrade.CoursesAPI.Extensions;
 using SkillTrade.CoursesAPI.Services;
@@ -105,16 +106,13 @@ namespace SkillTrade.CoursesAPI
                           .AllowCredentials();
                 });
             });
-            builder.Services.AddHealthChecks()
-                .AddCheck("self", () =>
-                {
-                    return HealthCheckResult.Healthy("ok");
-                });
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.WebHost.UseUrls($"http://localhost:{aspnetSetting["Port"]}");
+            builder.AddServiceDefaults();
             var app = builder.Build();
+            app.MapDefaultEndpoints();
             app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors("AllowAll");
@@ -123,10 +121,6 @@ namespace SkillTrade.CoursesAPI
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();
-            app.MapHealthChecks("/health", new HealthCheckOptions
-            {
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
             app.MapAllEndpoints();
             app.Run();
         }

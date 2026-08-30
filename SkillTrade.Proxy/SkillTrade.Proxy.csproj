@@ -14,4 +14,8 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SkillTrade.Aspire.ServiceDefault\SkillTrade.Aspire.ServiceDefault.csproj" />
+  </ItemGroup>
+
 </Project>

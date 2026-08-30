@@ -2,6 +2,8 @@
   <Folder Name="/SolutionFolder/">
     <File Path="docker-compose.yml" />
   </Folder>
+  <Project Path="SkillTrade.Aspire.ServiceDefault/SkillTrade.Aspire.ServiceDefault.csproj" Id="a5db6dc4-6b6b-4c4d-a045-a54a8999242d" />
+  <Project Path="SkillTrade.Aspire/SkillTrade.Aspire.csproj" Id="ba80e652-8f2c-4182-b8d0-b33d10bd358c" />
   <Project Path="SkillTrade.ContentAPI/SkillTrade.ContentAPI.csproj" />
   <Project Path="SkillTrade.Core/SkillTrade.Core.csproj" Id="2271907a-949b-4fcb-b7d5-84920d66a791" />
   <Project Path="SkillTrade.CoursesAPI/SkillTrade.CoursesAPI.csproj" />

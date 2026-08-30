@@ -1,3 +1,5 @@
+using SkillTrade.Aspire.ServiceDefault;
+
 namespace SkillTrade.Proxy
 {
     public class Program
@@ -7,7 +9,9 @@ namespace SkillTrade.Proxy
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddReverseProxy()
                 .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+            builder.AddServiceDefaults();
             var app = builder.Build();
+            app.MapDefaultEndpoints();
 
             app.MapGet("/", async context =>
             {
